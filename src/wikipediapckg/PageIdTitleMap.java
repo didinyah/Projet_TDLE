@@ -1,3 +1,5 @@
+package wikipediapckg;
+
 /* 
  * Computing Wikipedia's internal PageRanks
  * 

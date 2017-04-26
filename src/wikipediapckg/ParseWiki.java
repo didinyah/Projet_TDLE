@@ -1,3 +1,5 @@
+package wikipediapckg;
+
 /* 
  *
  * Parse 
@@ -35,13 +37,13 @@ public final class ParseWiki {
 	
 	/*---- Input/output files configuration ----*/
 	
-	private static final File PAGE_ID_TITLE_SQL_FILE = new File("frwiki-latest-page.sql.gz");           // Original input file
-	private static final File PAGE_ID_TITLE_RAW_FILE = new File("wikipedia-page-id-title.raw");  // Cache after preprocessing
+	private static final File PAGE_ID_TITLE_SQL_FILE = new File("wikifolder/frwiki-latest-page.sql.gz");           // Original input file
+	private static final File PAGE_ID_TITLE_RAW_FILE = new File("wikifolder/wikipedia-page-id-title.raw");  // Cache after preprocessing
 	
-	private static final File PAGE_LINKS_SQL_FILE = new File("frwiki-latest-pagelinks.sql.gz");   // Original input file
-	private static final File PAGE_LINKS_RAW_FILE = new File("wikipedia-page-links.raw");  // Cache after preprocessing
+	private static final File PAGE_LINKS_SQL_FILE = new File("wikifolder/frwiki-latest-pagelinks.sql.gz");   // Original input file
+	private static final File PAGE_LINKS_RAW_FILE = new File("wikifolder/wikipedia-page-links.raw");  // Cache after preprocessing
 	
-	private static final File INDEX_RAW_FILE = new File("wikipedia-linked.raw");  // Output file
+	private static final File INDEX_RAW_FILE = new File("wikifolder/wikipedia-linked.raw");  // Output file
 	
 	
 	/*---- Main program ----*/
