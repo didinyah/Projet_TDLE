@@ -10,7 +10,7 @@ import java.io.*;
 1 1 0 1 1
 0 0 1 0 1
 0 0 0 1 0 */
-public class PageRank {
+public class PageRankOld {
   
 	public int path[][] = new int[10][10];
 	public double pagerank[] = new double[10];
@@ -101,7 +101,7 @@ public class PageRank {
         Scanner in = new Scanner(System.in);
         System.out.println("Enter the Number of WebPages \n");
         nodes = in.nextInt();
-        PageRank p = new PageRank();
+        PageRankOld p = new PageRankOld();
         System.out.println("Enter the Adjacency Matrix with 1->PATH & 0->NO PATH Between two WebPages: \n");
         for(i=1;i<=nodes;i++) 
         {
