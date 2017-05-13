@@ -20,8 +20,12 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 
 /* 
@@ -67,9 +71,19 @@ public final class ParseWiki {
 			links = PageLinksList.readRawFile(PAGE_LINKS_RAW_FILE);
 		System.out.println("* Done indexing.");
 		
-		for(int i =0; i<links.length;i++) {
+		System.out.println(links.length);
+		
+		// On affiche maintenant les pages et les liens qu'elles réfèrent
+		
+		HashMap<Integer, ArrayList<Integer>> pagesAndLinks = evaluateLinks(links);
+		//HashMap<Integer, Integer> nbLinksPages = evaluateNbLinks(links, idToTitle);
+		
+		/*for(int i =0; i<links.length;i++) {
 			// System.out.println(links[i]);
-		}
+		}*/
+		
+		printSomePages(pagesAndLinks, idToTitle);
+		
 		
 		// Iteratively compute PageRank
 		final double DAMPING = 0.85;  // Between 0.0 and 1.0; standard value is 0.85
@@ -129,6 +143,68 @@ public final class ParseWiki {
 				}
 			}
 		}
+	}
+	
+	private static HashMap<Integer, ArrayList<Integer>> evaluateLinks(int[] links) {
+		// links[0] = id de la page
+		// links[1] = nb de liens de la page d'id links[0]
+		// links[2..2+links[1]-1] = tous les ids des liens que réfèrent la page d'id links[0]
+		HashMap<Integer, ArrayList<Integer>> res = new HashMap<Integer, ArrayList<Integer>>();
+		int i = 0;
+		ArrayList<Integer> allLiensPageActu;
+		while(i<links.length) {
+			int idPageActu = links[i];
+			i++;
+			int nbLiensPageActu = links[i];
+			allLiensPageActu = new ArrayList<Integer>();
+			// si la page n'a pas de liens, on envoie une arraylist vide
+			if(nbLiensPageActu>0) {
+				i++;
+				for(int j=0; j<nbLiensPageActu; j++) {
+					allLiensPageActu.add(links[i]);
+					i++;
+				}
+			}
+			res.put(idPageActu, allLiensPageActu);
+			System.out.println(i);
+		}
+		
+		return res;
+	}
+	
+	private static HashMap<Integer, Integer> evaluateNbLinks(int[] links, Map<Integer, String> idToTitle) {
+		// links[0] = id de la page
+		// links[1] = nb de liens de la page d'id links[0]
+		// links[2..2+links[1]-1] = tous les ids des liens que réfèrent la page d'id links[0]
+		HashMap<Integer, Integer> res = new HashMap<Integer, Integer>();
+		int i = 0;
+		while(i<links.length) {
+			int idPageActu = links[i];
+			i++;
+			int nbLiensPageActu = links[i];
+			i+=nbLiensPageActu+1;
+			System.out.println(i);
+			res.put(idPageActu, nbLiensPageActu);
+		}
+		
+		return res;
+	}
+	
+	private static void printSomePages(HashMap<Integer, ArrayList<Integer>> pagesAndLinks, Map<Integer, String> idToTitle) {
+		final int NUM_PAGES = 10;
+		Iterator<Entry<Integer, ArrayList<Integer>>> it = pagesAndLinks.entrySet().iterator();
+		int i =0;
+	    while (it.hasNext() && i<NUM_PAGES) {
+	        Entry<Integer, ArrayList<Integer>> pair = it.next();
+	        int nbLiensPageActu = pair.getValue().size();
+			System.out.println(idToTitle.get(pair.getKey()) + " : " + nbLiensPageActu);
+			for(int j =0; j< nbLiensPageActu; j++) {
+				System.out.print(idToTitle.get(pair.getValue().get(j)) + ", ");
+			}
+			System.out.println("");
+	        it.remove(); // avoids a ConcurrentModificationException
+	        i++;
+	    }
 	}
 		
 }
