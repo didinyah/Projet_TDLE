@@ -24,7 +24,7 @@ public class Fenetre extends JFrame {
 	public JTextField jtf = new JTextField("");
 	public JLabel label = new JLabel("");
 	public JPanel bottom = new JPanel( new FlowLayout(FlowLayout.LEFT) );
-
+	
 	public void result(JPanel bottom,String query){
 		bottom.removeAll();
 		bottom.revalidate();
@@ -39,6 +39,7 @@ public class Fenetre extends JFrame {
 			add_panel(bottom,"Londres.org","Londres","8");			
 		}
 		else{}
+        
 	}
 	
 	public void add_panel(JPanel bottom,String source,String mot,String pagerank){
