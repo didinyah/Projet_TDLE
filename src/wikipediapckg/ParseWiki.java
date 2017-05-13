@@ -75,14 +75,13 @@ public final class ParseWiki {
 		
 		// On affiche maintenant les pages et les liens qu'elles réfèrent
 		
-		HashMap<Integer, ArrayList<Integer>> pagesAndLinks = evaluateLinks(links);
-		//HashMap<Integer, Integer> nbLinksPages = evaluateNbLinks(links, idToTitle);
+		//HashMap<Integer, ArrayList<Integer>> pagesAndLinks = evaluateLinks(links);
+		//printSomePages(pagesAndLinks, idToTitle);
 		
-		/*for(int i =0; i<links.length;i++) {
-			// System.out.println(links[i]);
-		}*/
+		//HashMap<Integer, Integer> nbLinksPages = evaluateNbLinks(links);
 		
-		printSomePages(pagesAndLinks, idToTitle);
+		int[][] allLinksSplitted = splitAllLinks(links, titleToId.size());
+		printSomePagesLinksSplitted(allLinksSplitted, idToTitle);
 		
 		
 		// Iteratively compute PageRank
@@ -114,7 +113,7 @@ public final class ParseWiki {
 			out.close();
 		}
 	}
-	
+
 	/*---- Miscellaneous functions ----*/
 	
 	private static void printPagerankChangeRatios(double[] prevPr, double[] pr) {
@@ -172,7 +171,7 @@ public final class ParseWiki {
 		return res;
 	}
 	
-	private static HashMap<Integer, Integer> evaluateNbLinks(int[] links, Map<Integer, String> idToTitle) {
+	private static HashMap<Integer, Integer> evaluateNbLinks(int[] links) {
 		// links[0] = id de la page
 		// links[1] = nb de liens de la page d'id links[0]
 		// links[2..2+links[1]-1] = tous les ids des liens que réfèrent la page d'id links[0]
@@ -204,6 +203,47 @@ public final class ParseWiki {
 			System.out.println("");
 	        it.remove(); // avoids a ConcurrentModificationException
 	        i++;
+	    }
+	}
+	
+	// va renvoyer les ids des liens séparés avec le 1er élément de chaque tableau l'id de la page de base
+	private static int[][] splitAllLinks(int[] links, int nbPages) {
+		int[][] res = new int[nbPages][];
+		int[] liensPageActu;
+		int i=0;
+		int pageActu=0;
+		while(i<links.length) {
+			int idPageActu = links[i];
+			i++;
+			int nbLiensPageActu = links[i];
+			liensPageActu = new int[nbLiensPageActu+2];
+			liensPageActu[0] = idPageActu;
+			liensPageActu[1] = nbLiensPageActu;
+			// si la page a des liens, on les ajoute tous à l'entier
+			if(nbLiensPageActu>0) {
+				i++;
+				for(int j=0; j<nbLiensPageActu; j++) {
+					liensPageActu[j+2] = links[i];
+					i++;
+				}
+			}
+			res[pageActu] = liensPageActu;
+			System.out.println("page actu : " + pageActu + "; i : " + i);
+			pageActu++;
+		}
+		return res;
+	}
+	
+	private static void printSomePagesLinksSplitted(int[][] allLinksSplitted, Map<Integer, String> idToTitle) {
+		final int NUM_PAGES = 15;
+	    for (int i=0; i<NUM_PAGES; i++) {
+	    	String titrePage = idToTitle.get(allLinksSplitted[i][0]);
+	    	int nbLiensPage = allLinksSplitted[i][1];
+			System.out.println(titrePage + " : " + nbLiensPage);
+			for(int j =0; j< nbLiensPage; j++) {
+				System.out.print(idToTitle.get(allLinksSplitted[i][j+2]) + ", ");
+			}
+			System.out.println("");
 	    }
 	}
 		

@@ -7,7 +7,7 @@ import wikipediapckg.ParseWiki;
 public class Main {
 	public static void main(String[] args) {
 		// On indique le nombre d'itérations à faire pour le pagerank
-		int nbIterations = 100;
+		int nbIterations = 20;
 		// choix de la stratégie (avec ou sans mapreduce)
 		
 		// Stratégie simple : pas de map reduce
