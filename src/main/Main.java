@@ -2,23 +2,27 @@ package main;
 
 import java.io.IOException;
 
-import wikipediapckg.ParseWiki;
+import wikipediapckg.pageRank.IPageRanker;
+import wikipediapckg.pageRank.arraysRanker.ParseWiki;
 
 public class Main {
 	public static void main(String[] args) {
-		// On indique le nombre d'itérations à faire pour le pagerank
+		// On indique le nombre d'itï¿½rations ï¿½ faire pour le pagerank
 		int nbIterations = 20;
-		// choix de la stratégie (avec ou sans mapreduce)
+		// choix de la stratï¿½gie (avec ou sans mapreduce)
 		
-		// Stratégie simple : pas de map reduce
+		// Stratï¿½gie simple : pas de map reduce
+		
+		IPageRanker ranker = new ParseWiki();
+		
 		try {
-			ParseWiki.WikipediaSimpleStrategy(nbIterations);
+			ranker.createPageRank(nbIterations);
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		// Stratégie map reduce
+		// Stratï¿½gie map reduce
 		
 	}
 }

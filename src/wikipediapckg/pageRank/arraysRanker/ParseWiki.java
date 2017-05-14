@@ -1,24 +1,5 @@
-package wikipediapckg;
+package wikipediapckg.pageRank.arraysRanker;
 
-/* 
- *
- * Parse 
- * <lang>wiki-<date>-page.sql.gz
- * <lang>wiki-<date>-page-links.sql.gz
- * to produce simplified files with page ids and links
- * 
- * Extracted from the original code :
- *
- *
- * Copyright (c) 2016 Project Nayuki
- * All rights reserved. Contact Nayuki for licensing.
- * https://www.nayuki.io/page/computing-wikipedias-internal-pageranks
- */
-
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +7,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import wikipediapckg.WriterReader.RawFileIO;
+import wikipediapckg.pageRank.IPageRanker;
 
 
 /* 
@@ -37,57 +21,32 @@ import java.util.Map.Entry;
  * The program prints a bunch of statistics and progress messages on standard output.
  */
 
-public final class ParseWiki {
+public final class ParseWiki implements IPageRanker{
 	
-	/*---- Input/output files configuration ----*/
-	
-	private static final File PAGE_ID_TITLE_SQL_FILE = new File("wikifolder/frwiki-latest-page.sql.gz");           // Original input file
-	private static final File PAGE_ID_TITLE_RAW_FILE = new File("wikifolder/wikipedia-page-id-title.raw");  // Cache after preprocessing
-	
-	private static final File PAGE_LINKS_SQL_FILE = new File("wikifolder/frwiki-latest-pagelinks.sql.gz");   // Original input file
-	private static final File PAGE_LINKS_RAW_FILE = new File("wikifolder/wikipedia-page-links.raw");  // Cache after preprocessing
-	
-	private static final File INDEX_RAW_FILE = new File("wikifolder/wikipedia-linked.raw");  // Output file
-	private static final File PAGERANK_RAW_FILE = new File("wikifolder/wikipedia-pageranks.raw");
-	
+
 	/*---- Main program ----*/
 	
-	public static void WikipediaSimpleStrategy(int nbIterations) throws IOException {
-		// Read page-ID-title data
-		Map<String,Integer> titleToId;
-		if (!PAGE_ID_TITLE_RAW_FILE.isFile()) {  // Read SQL and write cache
-			titleToId = PageIdTitleMap.readSqlFile(PAGE_ID_TITLE_SQL_FILE);
-			PageIdTitleMap.writeRawFile(titleToId, PAGE_ID_TITLE_RAW_FILE);
-		} else  // Read cache
-			titleToId = PageIdTitleMap.readRawFile(PAGE_ID_TITLE_RAW_FILE);
-		Map<Integer,String> idToTitle = PageIdTitleMap.computeReverseMap(titleToId);
+	public void createPageRank(int nbIterations) throws IOException {
 		
-		// Read page-links data
-		int[] links;
-		if (!PAGE_LINKS_RAW_FILE.isFile()) {  // Read SQL and write cache
-			links = PageLinksList.readSqlFile(PAGE_LINKS_SQL_FILE, titleToId, idToTitle);
-			PageLinksList.writeRawFile(links, PAGE_LINKS_RAW_FILE);
-		} else  // Read cache
-			links = PageLinksList.readRawFile(PAGE_LINKS_RAW_FILE);
-		System.out.println("* Done indexing.");
+		RawFileIO rfr = new RawFileIO();
 		
-		System.out.println(links.length);
+		rfr.searchFile();
 		
-		// On affiche maintenant les pages et les liens qu'elles réfèrent
+		// On affiche maintenant les pages et les liens qu'elles rï¿½fï¿½rent
 		
 		//HashMap<Integer, ArrayList<Integer>> pagesAndLinks = evaluateLinks(links);
 		//printSomePages(pagesAndLinks, idToTitle);
 		
 		//HashMap<Integer, Integer> nbLinksPages = evaluateNbLinks(links);
 		
-		int[][] allLinksSplitted = splitAllLinks(links, titleToId.size());
-		printSomePagesLinksSplitted(allLinksSplitted, idToTitle);
+		int[][] allLinksSplitted = splitAllLinks(rfr.getLinks(), rfr.getTitleToId().size());
+		printSomePagesLinksSplitted(allLinksSplitted, rfr.getIdToTitle());
 		
 		
 		// Iteratively compute PageRank
 		final double DAMPING = 0.85;  // Between 0.0 and 1.0; standard value is 0.85
 		System.out.println("Computing PageRank...");
-		Pagerank pr = new Pagerank(links);
+		Pagerank pr = new Pagerank(rfr.getLinks());
 		double[] prevPageranks = pr.pageranks.clone();
 		for (int i = 0; i < nbIterations; i++) {
 			// Do iteration
@@ -99,20 +58,16 @@ public final class ParseWiki {
 			// Calculate and print statistics
 			double[] pageranks = pr.pageranks;
 			printPagerankChangeRatios(prevPageranks, pageranks);
-			printTopPages(pageranks, idToTitle);
+			printTopPages(pageranks, rfr.getIdToTitle());
 			prevPageranks = pageranks.clone();
 		}
 		
-		// Write PageRanks to file
-		DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(PAGERANK_RAW_FILE)));
-		try {
-			for (double x : pr.pageranks)
-				out.writeDouble(x);
-		} 
-		finally {
-			out.close();
-		}
+		double[] pageranks = pr.pageranks;
+		rfr.writePageRanksToRaw(pageranks);
 	}
+
+
+
 
 	/*---- Miscellaneous functions ----*/
 	
@@ -147,7 +102,7 @@ public final class ParseWiki {
 	private static HashMap<Integer, ArrayList<Integer>> evaluateLinks(int[] links) {
 		// links[0] = id de la page
 		// links[1] = nb de liens de la page d'id links[0]
-		// links[2..2+links[1]-1] = tous les ids des liens que réfèrent la page d'id links[0]
+		// links[2..2+links[1]-1] = tous les ids des liens que rï¿½fï¿½rent la page d'id links[0]
 		HashMap<Integer, ArrayList<Integer>> res = new HashMap<Integer, ArrayList<Integer>>();
 		int i = 0;
 		ArrayList<Integer> allLiensPageActu;
@@ -174,7 +129,7 @@ public final class ParseWiki {
 	private static HashMap<Integer, Integer> evaluateNbLinks(int[] links) {
 		// links[0] = id de la page
 		// links[1] = nb de liens de la page d'id links[0]
-		// links[2..2+links[1]-1] = tous les ids des liens que réfèrent la page d'id links[0]
+		// links[2..2+links[1]-1] = tous les ids des liens que rï¿½fï¿½rent la page d'id links[0]
 		HashMap<Integer, Integer> res = new HashMap<Integer, Integer>();
 		int i = 0;
 		while(i<links.length) {
@@ -206,7 +161,7 @@ public final class ParseWiki {
 	    }
 	}
 	
-	// va renvoyer les ids des liens séparés avec le 1er élément de chaque tableau l'id de la page de base
+	// va renvoyer les ids des liens sï¿½parï¿½s avec le 1er ï¿½lï¿½ment de chaque tableau l'id de la page de base
 	private static int[][] splitAllLinks(int[] links, int nbPages) {
 		int[][] res = new int[nbPages][];
 		int[] liensPageActu;
@@ -219,7 +174,7 @@ public final class ParseWiki {
 			liensPageActu = new int[nbLiensPageActu+2];
 			liensPageActu[0] = idPageActu;
 			liensPageActu[1] = nbLiensPageActu;
-			// si la page a des liens, on les ajoute tous à l'entier
+			// si la page a des liens, on les ajoute tous ï¿½ l'entier
 			if(nbLiensPageActu>0) {
 				i++;
 				for(int j=0; j<nbLiensPageActu; j++) {

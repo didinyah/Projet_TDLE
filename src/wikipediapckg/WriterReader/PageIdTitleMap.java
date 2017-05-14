@@ -1,4 +1,4 @@
-package wikipediapckg;
+package wikipediapckg.WriterReader;
 
 /* 
  * Computing Wikipedia's internal PageRanks
@@ -52,7 +52,7 @@ CREATE TABLE `page` (
 /* 
  * Provides static functions for working with page ID/title data.
  */
-final class PageIdTitleMap {
+public final class PageIdTitleMap {
 	
 	// Reads the given gzipped SQL file and returns a mapping of page title to integer ID.
 	public static Map<String,Integer> readSqlFile(File file) throws IOException {

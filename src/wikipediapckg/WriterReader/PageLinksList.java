@@ -1,4 +1,4 @@
-package wikipediapckg;
+package wikipediapckg.WriterReader;
 
 /* 
  * Computing Wikipedia's internal PageRanks
@@ -42,7 +42,7 @@ CREATE TABLE `pagelinks` (
 /* 
  * Provides static functions for working with page links data.
  */
-final class PageLinksList {
+public final class PageLinksList {
 	
 	// Reads the given gzipped SQL file and returns a compressed list of page links.
 	public static int[] readSqlFile(File file, Map<String,Integer> titleToId, Map<Integer,String> idToTitle) throws IOException {

@@ -1,4 +1,4 @@
-package wikipediapckg;
+package wikipediapckg.WriterReader;
 
 /* 
  * Computing Wikipedia's internal PageRanks

@@ -1,4 +1,4 @@
-package wikipediapckg;
+package wikipediapckg.pageRank.arraysRanker;
 
 /* 
  * Computing Wikipedia's internal PageRanks
