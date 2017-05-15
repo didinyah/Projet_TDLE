@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import wikipediapckg.pageRank.IPageRanker;
 import wikipediapckg.pageRank.arraysRanker.ParseWiki;
+import wikipediapckg.pageRank.hadoop.MapReduceRanker;
 
 public class Main {
 	public static void main(String[] args) {
@@ -13,10 +14,10 @@ public class Main {
 		
 		// Strat�gie simple : pas de map reduce
 		
-		IPageRanker ranker = new ParseWiki();
+		IPageRanker ranker = new MapReduceRanker();
 		
 		try {
-			ranker.createPageRank(nbIterations);
+			ranker.createPageRank(nbIterations,0.85);
 		} 
 		catch (IOException e) {
 			e.printStackTrace();

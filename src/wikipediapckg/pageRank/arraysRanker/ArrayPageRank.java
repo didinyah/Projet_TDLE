@@ -14,7 +14,7 @@ import java.util.Arrays;
 /* 
  * Calculates PageRank, by encapsulating a list of links and a list of current PageRank values.
  */
-final class Pagerank {
+final class ArrayPageRank {
 	
 	/*---- Fields ----*/
 	
@@ -47,7 +47,7 @@ final class Pagerank {
 	
 	// Constructs a PageRank calculator based on the given array of links
 	// in the compressed format returned by class PageLinksList.
-	public Pagerank(int[] links) {
+	public ArrayPageRank(int[] links) {
 		this.links = links;
 		
 		// Find highest page ID among all links

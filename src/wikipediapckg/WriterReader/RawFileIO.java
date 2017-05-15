@@ -18,7 +18,7 @@ public class RawFileIO {
 	private static final File PAGE_LINKS_SQL_FILE = new File("wikifolder/frwiki-latest-pagelinks.sql.gz");   // Original input file
 	private static final File PAGE_LINKS_RAW_FILE = new File("wikifolder/wikipedia-page-links.raw");  // Cache after preprocessing
 	
-	private static final File INDEX_RAW_FILE = new File("wikifolder/wikipedia-linked.raw");  // Output file
+	//private static final File INDEX_RAW_FILE = new File("wikifolder/wikipedia-linked.raw");  // Output file
 	private static final File PAGERANK_RAW_FILE = new File("wikifolder/wikipedia-pageranks.raw");
 	
 	private static Map<String,Integer> titleToId;

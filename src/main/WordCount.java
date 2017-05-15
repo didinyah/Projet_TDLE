@@ -5,7 +5,6 @@ import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -52,7 +51,7 @@ public class WordCount {
   public static void main(String[] args) throws Exception {
     Configuration conf = new Configuration();
     String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
-    FileSystem fs = FileSystem.newInstance(conf);
+    //FileSystem fs = FileSystem.newInstance(conf);
 
     if (otherArgs.length != 2) {
       System.err.println("Usage: wordcount <in> <out>");

@@ -26,7 +26,7 @@ public final class ParseWiki implements IPageRanker{
 
 	/*---- Main program ----*/
 	
-	public void createPageRank(int nbIterations) throws IOException {
+	public void createPageRank(final int nbIterations,final double damping) throws IOException {
 		
 		RawFileIO rfr = new RawFileIO();
 		
@@ -39,27 +39,27 @@ public final class ParseWiki implements IPageRanker{
 		
 		//HashMap<Integer, Integer> nbLinksPages = evaluateNbLinks(links);
 		
-		int[][] allLinksSplitted = splitAllLinks(rfr.getLinks(), rfr.getTitleToId().size());
-		printSomePagesLinksSplitted(allLinksSplitted, rfr.getIdToTitle());
+//		int[][] allLinksSplitted = splitAllLinks(rfr.getLinks(), rfr.getTitleToId().size());
+//		printSomePagesLinksSplitted(allLinksSplitted, rfr.getIdToTitle());
 		
 		
 		// Iteratively compute PageRank
-		final double DAMPING = 0.85;  // Between 0.0 and 1.0; standard value is 0.85
+		//final double DAMPING = 0.85;  // Between 0.0 and 1.0; standard value is 0.85
 		System.out.println("Computing PageRank...");
-		Pagerank pr = new Pagerank(rfr.getLinks());
-		double[] prevPageranks = pr.pageranks.clone();
+		ArrayPageRank pr = new ArrayPageRank(rfr.getLinks());
+//		double[] prevPageranks = pr.pageranks.clone();
 		for (int i = 0; i < nbIterations; i++) {
 			// Do iteration
 			System.out.print("Iteration " + i);
 			long startTime = System.currentTimeMillis();
-			pr.iterateOnce(DAMPING);
+			pr.iterateOnce(damping);
 			System.out.printf(" (%.3f s)%n", (System.currentTimeMillis() - startTime) / 1000.0);
 			
 			// Calculate and print statistics
 			double[] pageranks = pr.pageranks;
-			printPagerankChangeRatios(prevPageranks, pageranks);
+			//printPagerankChangeRatios(prevPageranks, pageranks);
 			printTopPages(pageranks, rfr.getIdToTitle());
-			prevPageranks = pageranks.clone();
+//			prevPageranks = pageranks.clone();
 		}
 		
 		double[] pageranks = pr.pageranks;
@@ -183,7 +183,7 @@ public final class ParseWiki implements IPageRanker{
 				}
 			}
 			res[pageActu] = liensPageActu;
-			System.out.println("page actu : " + pageActu + "; i : " + i);
+			//System.out.println("page actu : " + pageActu + "; i : " + i);
 			pageActu++;
 		}
 		return res;

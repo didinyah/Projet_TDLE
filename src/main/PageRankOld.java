@@ -1,7 +1,6 @@
 package main;
 
 import java.util.*;
-import java.io.*;
 
 /* pour les tests : 
  * nbpage = 5 et matrice : 
@@ -97,7 +96,7 @@ public class PageRankOld {
 	 
 	public static void main(String args[])
 	{
-        int nodes,i,j,cost;
+        int nodes,i,j;
         Scanner in = new Scanner(System.in);
         System.out.println("Enter the Number of WebPages \n");
         nodes = in.nextInt();
@@ -113,6 +112,8 @@ public class PageRankOld {
         	}
         }
         p.calc(nodes);
+        
+        in.close();
 	}   
  
 }
