@@ -6,8 +6,13 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -15,7 +20,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.text.DefaultCaret;
+
+import java.util.Collections;
+import java.util.ListIterator;
 
 public class Fenetre extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -25,55 +35,72 @@ public class Fenetre extends JFrame {
 	public JLabel label = new JLabel("");
 	public JPanel bottom = new JPanel( new GridLayout(0,1,0,10) );
 
-	//la fonction à activer qunad on click sur bouton
+	//la fonction Ã  activer qunad on click sur bouton
 	public void result(JPanel bottom,String query){
 		bottom.removeAll();
 		bottom.revalidate();
 		bottom.repaint();
+		ArrayList<String> list = new ArrayList<String>();
+		list.add("a");
+		list.add("b");
+		list.add("c");
+		list.add("d");
+		list.add("e");
+		list.add("g");
+		list.add("h");
+		list.add("i");
+		list.add("j");
 		if( query.equals("France") ){
-			add_panel(bottom,"France.org","France","10");
-			add_panel(bottom,"Etats-Unis.org","Etats-unis","9");
-			add_panel(bottom,"D.org","D","8");
-		}
-		else if( query.equals("Paris") ){
-			add_panel(bottom,"Paris.org","Paris","8");
-			add_panel(bottom,"Londres.org","Londres","8");			
+			add_panel(bottom,"D.org",list.subList(1, 5),"8");
+			add_panel(bottom,"Etats-Unis.org",list.subList(2, 5),"9");
+			add_panel(bottom,"France.org",list,"10");
 		}
 		else if( query.equals("a") ){
-			add_panel(bottom,"Paris.org","Paris","8");
-			add_panel(bottom,"Londres.org","Londres","8");			
-			add_panel(bottom,"France.org","France","10");
-			add_panel(bottom,"Etats-Unis.org","Etats-unis","9");
-			add_panel(bottom,"D.org","D","8");
-			add_panel(bottom,"France.org","France","10");
-			add_panel(bottom,"Etats-Unis.org","Etats-unis","9");
-			add_panel(bottom,"D.org","D","8");
-			add_panel(bottom,"Paris.org","Paris","8");
-			add_panel(bottom,"Londres.org","Londres","8");			
-			add_panel(bottom,"France.org","France","10");
-			add_panel(bottom,"Etats-Unis.org","Etats-unis","9");
-			add_panel(bottom,"D.org","D","8");
-			add_panel(bottom,"France.org","France","10");
-			add_panel(bottom,"Etats-Unis.org","Etats-unis","9");
-			add_panel(bottom,"D.org","D","8");
+			add_panel(bottom,"Paris",list,"10");
+			add_panel(bottom,"Londres",list,"8");			
+			add_panel(bottom,"France",list.subList(2, 5),"8");
+			add_panel(bottom,"Etats-Unis",list.subList(1, 5),"7");
+			add_panel(bottom,"D-Day",list,"5");
 		}		
 		else{}
 	}
 	
-	//la fonction ajouter paneau à bottom, ie , au panneau du dessous
-	public void add_panel(JPanel bottom,String source,String mot,String pagerank){
-		if( mot.length()>0 ){
-			JLabel labelsource = new JLabel("<html>"+source+"<br>"+pagerank+"<br>"+mot+"</html>");
+	//la fonction ajouter paneau Ã  bottom, ie , au panneau du dessous
+	public void add_panel(JPanel bottom,final String nom,final java.util.List<String> list,String pagerank){
+		if( nom.length()>0 ){
+			int n = list.size() ;
+			JLabel labelsource = new JLabel("<html>Nom:"+nom+"<br>Nombre de liens:"+n+"<br>pagerank:"+pagerank+"</html>");
 			labelsource.setBorder(BorderFactory.createLineBorder(Color.black));
 			labelsource.setPreferredSize(new Dimension(600,70));
 			labelsource.setHorizontalAlignment(JLabel.LEFT);
+			labelsource.addMouseListener(new MouseAdapter()  
+			{  
+			    public void mouseClicked(MouseEvent e)
+			    {  
+			        JFrame jf=new JFrame(nom);
+			        jf.setBackground(Color.BLACK);
+			        jf.setSize(new Dimension(400,100));
+				    jf.setBackground(Color.LIGHT_GRAY);
+			        final JTextArea txtArea = new JTextArea();
+			        final JScrollPane scrollPane = new JScrollPane(txtArea);
+				    txtArea.setBackground(Color.LIGHT_GRAY);
+			        jf.add(scrollPane);
+                    txtArea.setText( "Link present in the page "+nom+":\n" );
+	                for(int i=0;i<list.size();i++)
+	                {
+	                    txtArea.setText( txtArea.getText()+" \n "+list.get(i) );
+	                }
+			        jf.setVisible(true);
+			        jf.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			    }  
+			});
 			bottom.add(labelsource,0);
 		}
 	}
 	
 	//la classe fenetre
 	public Fenetre(){
-		//création du panneau des options
+		//crÃ©ation du panneau des options
 		this.creerPanneau();
 		this.creerres();
 	}
@@ -101,7 +128,9 @@ public class Fenetre extends JFrame {
 	    this.setContentPane(container);
 	    //bouton
 		JButton bouton = new JButton("search");
-		bouton.setPreferredSize(new Dimension(100, 30));
+		bouton.setPreferredSize(new Dimension(100, 33));
+		bouton.setBackground(Color.WHITE);
+		bouton.setMargin(new Insets(0,0,0,0));
 		top.add(bouton);
 		bouton.addActionListener(new ActionListener()
 		{
@@ -129,7 +158,7 @@ public class Fenetre extends JFrame {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setBounds(50, 30, 300, 50);
 
-        bottom.setBorder(BorderFactory.createLineBorder(Color.ORANGE));
+        bottom.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		bottom.setBackground(Color.LIGHT_GRAY);
         
 		container.add(scrollPane);
