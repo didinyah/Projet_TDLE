@@ -9,13 +9,13 @@ import wikipediapckg.pageRank.hadoop.MapReduceRanker;
 public class Main {
 	public static void main(String[] args) {
 		// On indique le nombre d'it�rations � faire pour le pagerank
-		int nbIterations = 20;
+		int nbIterations = 5;
 		// choix de la strat�gie (avec ou sans mapreduce)
 		
 		// Strat�gie simple : pas de map reduce
 		
 		IPageRanker ranker = new MapReduceRanker();
-		
+		//IPageRanker ranker = new ParseWiki();
 		try {
 			ranker.createPageRank(nbIterations,0.85);
 		} 
