@@ -71,7 +71,7 @@ public final class ParseWiki implements IPageRanker{
 		int[][] allLinksSplitted = splitAllLinks(rfr.getLinks(), rfr.getTitleToId().size());
 		//printSomePagesLinksSplitted(allLinksSplitted, rfr.getIdToTitle());
 				
-		Fenetre fenetre = new Fenetre(allLinksSplitted, pageranks, rfr.getIdToTitle());
+		//Fenetre fenetre = new Fenetre(allLinksSplitted, pageranks, rfr.getIdToTitle());
 	}
 
 
