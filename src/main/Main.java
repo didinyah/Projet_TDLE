@@ -13,10 +13,10 @@ public class Main {
 		// choix de la strat�gie (avec ou sans mapreduce)
 		
 		// Strat�gie simple : pas de map reduce
+		double damping = 0.85;
+		//IPageRanker ranker = new MapReduceRanker();
 		
 		IPageRanker ranker = new ParseWiki();
-		double damping = 0.85;
-		//IPageRanker ranker = new ParseWiki();
 		try {
 			ranker.createPageRank(nbIterations,damping);
 		} 
