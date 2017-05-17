@@ -107,9 +107,10 @@ public class ElasticSearchImplementation {
 	}
 	
 	public GetResponse getResponseRequest(int nb) {
-		Client client = (Client)restClient;
+		RestClient client = getRestClient();
 		System.out.println(client.toString());
-		GetResponse response = client.prepareGet("wikipedia", "page", String.valueOf(nb))
+		Client bwa = (Client) client;
+		GetResponse response = bwa.prepareGet("wikipedia", "page", String.valueOf(nb))
 		        .setOperationThreaded(false)
 		        .get();
 		return response;
