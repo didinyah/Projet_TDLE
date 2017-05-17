@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import main.Fenetre;
 import wikipediapckg.WriterReader.RawFileIO;
 import wikipediapckg.pageRank.IPageRanker;
 
@@ -37,10 +38,7 @@ public final class ParseWiki implements IPageRanker{
 		//HashMap<Integer, ArrayList<Integer>> pagesAndLinks = evaluateLinks(links);
 		//printSomePages(pagesAndLinks, idToTitle);
 		
-		//HashMap<Integer, Integer> nbLinksPages = evaluateNbLinks(links);
 		
-//		int[][] allLinksSplitted = splitAllLinks(rfr.getLinks(), rfr.getTitleToId().size());
-//		printSomePagesLinksSplitted(allLinksSplitted, rfr.getIdToTitle());
 		
 		
 		// Iteratively compute PageRank
@@ -64,6 +62,16 @@ public final class ParseWiki implements IPageRanker{
 		
 		double[] pageranks = pr.pageranks;
 		rfr.writePageRanksToRaw(pageranks);
+		
+		System.out.println("Fin des itérations pour le pagerank simple");
+		
+		// On ouvre la fenêtre pour consulter les résultats
+		//HashMap<Integer, Integer> nbLinksPages = evaluateNbLinks(links);
+		
+		int[][] allLinksSplitted = splitAllLinks(rfr.getLinks(), rfr.getTitleToId().size());
+		//printSomePagesLinksSplitted(allLinksSplitted, rfr.getIdToTitle());
+				
+		Fenetre fenetre = new Fenetre(allLinksSplitted, pageranks, rfr.getIdToTitle());
 	}
 
 
@@ -167,6 +175,7 @@ public final class ParseWiki implements IPageRanker{
 		int[] liensPageActu;
 		int i=0;
 		int pageActu=0;
+		System.out.println("Séparation des liens");
 		while(i<links.length) {
 			int idPageActu = links[i];
 			i++;
@@ -183,9 +192,9 @@ public final class ParseWiki implements IPageRanker{
 				}
 			}
 			res[pageActu] = liensPageActu;
-			//System.out.println("page actu : " + pageActu + "; i : " + i);
 			pageActu++;
 		}
+		System.out.println("Fin de séparation des liens");
 		return res;
 	}
 	

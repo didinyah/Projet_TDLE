@@ -14,10 +14,11 @@ public class Main {
 		
 		// Strat�gie simple : pas de map reduce
 		
-		IPageRanker ranker = new MapReduceRanker();
+		IPageRanker ranker = new ParseWiki();
+		double damping = 0.85;
 		//IPageRanker ranker = new ParseWiki();
 		try {
-			ranker.createPageRank(nbIterations,0.85);
+			ranker.createPageRank(nbIterations,damping);
 		} 
 		catch (IOException e) {
 			e.printStackTrace();

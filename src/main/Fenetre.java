@@ -26,6 +26,7 @@ import javax.swing.text.DefaultCaret;
 
 import java.util.Collections;
 import java.util.ListIterator;
+import java.util.Map;
 
 public class Fenetre extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -34,13 +35,18 @@ public class Fenetre extends JFrame {
 	public JTextField jtf = new JTextField("");
 	public JLabel label = new JLabel("");
 	public JPanel bottom = new JPanel( new GridLayout(0,1,0,10) );
+	private int[][] allLinksSplitted;
+	private double[] pageRanks;
+	private Map<Integer,String> titleById;
 
 	//la fonction à activer qunad on click sur bouton
 	public void result(JPanel bottom,String query){
 		bottom.removeAll();
 		bottom.revalidate();
 		bottom.repaint();
-		ArrayList<String> list = new ArrayList<String>();
+		
+		// on va rechercher les liens
+		/*ArrayList<String> list = new ArrayList<String>();
 		list.add("a");
 		list.add("b");
 		list.add("c");
@@ -62,7 +68,7 @@ public class Fenetre extends JFrame {
 			add_panel(bottom,"Etats-Unis",list.subList(1, 5),"7");
 			add_panel(bottom,"D-Day",list,"5");
 		}		
-		else{}
+		else{}*/
 	}
 	
 	//la fonction ajouter paneau à bottom, ie , au panneau du dessous
@@ -103,6 +109,15 @@ public class Fenetre extends JFrame {
 		//création du panneau des options
 		this.creerPanneau();
 		this.creerres();
+	}
+	
+	public Fenetre(int[][] allLinksSplitted, double[] pageranks, Map<Integer,String> titleById){
+		//création du panneau des options
+		this.creerPanneau();
+		this.creerres();
+		this.allLinksSplitted = allLinksSplitted;
+		this.pageRanks = pageranks;
+		this.titleById = titleById;
 	}
 
 	//le panneau du haut avec la barre de recherche et le bouton	
