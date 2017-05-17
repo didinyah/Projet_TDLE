@@ -1,7 +1,9 @@
 package wikipediapckg.ElasticSearch;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 
 import org.apache.http.HttpEntity;
@@ -14,6 +16,7 @@ import org.elasticsearch.client.ResponseListener;
 import org.elasticsearch.client.RestClient;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.*;
 
@@ -115,4 +118,29 @@ public class ElasticSearchImplementation {
 		        .get();
 		return response;
 	}
+	
+    public ArrayList<PageWiki> Search(String search)
+    {
+        Response response;
+        ArrayList<PageWiki> res = new ArrayList<PageWiki>();
+        String query = "{\"query\":{\"match\":{\"body\":\"" + search +"\"}}}";
+        HashMap <String, String> params = new HashMap<String,String>();
+        ObjectMapper jacksonObjectMapper = new ObjectMapper();
+        params.put("pretty", "true");
+        try {
+                response = restClient.performRequest("GET", "/"+index+"/"+type,params,new StringEntity(query));
+                HttpEntity entity = response.getEntity();
+                ResponseHits responseHits = jacksonObjectMapper.readValue(entity.getContent(), ResponseHits.class);
+                for(Hit h : responseHits.getHits().getHits())
+                {
+                    res.add(h.getSource());
+                }
+             
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return res;
+ 
+    }
 }
