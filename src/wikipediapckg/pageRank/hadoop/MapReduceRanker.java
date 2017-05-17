@@ -9,21 +9,33 @@ import wikipediapckg.WriterReader.RawFileIO;
 import wikipediapckg.pageRank.IPageRanker;
 import wikipediapckg.pageRank.hadoop.job.WikiMapReduceIterator;
 
-public class MapReduceRanker implements IPageRanker {
+
+/**
+ * methode qui permet de calcul du OageRank a partir du Map Reduce de Hadoop
+ * @author dinar
+ * @deprecated la methode est moins efficiante que la methode array
+ */
+public  class  MapReduceRanker implements IPageRanker {
 
 
 
-	public static String OUTPUTLINEJOB1 = "hadoop/Job1OutPut.txt"; 
+	public static String OUTPUTLINEJOB1 = "hadoop/JobTest.txt"; 
+	//public static String OUTPUTLINEJOB1 = "hadoop/Job1OutPut.txt"; 
+
 	@Override
 	public void createPageRank(int nbIterations, double damping) 
 			throws IOException {
 
 
-		RawFileIO rfr = new RawFileIO();
 
-		rfr.searchFile();
-		//JOB 1 ecriture dans le fichier
-		initMapReduce(rfr);
+		//JOB 1 ecriture dans le fichier		
+		
+//		{
+//		RawFileIO rfr = new RawFileIO();
+//		rfr.searchFile();
+//		initMapReduce(rfr.getLinks());
+//		}
+//		System.gc();
 		
 		//JOB 2 Interation
 		WikiMapReduceIterator process = new WikiMapReduceIterator(damping, nbIterations);
@@ -40,7 +52,7 @@ public class MapReduceRanker implements IPageRanker {
 		
 		
 	}
-	public void initMapReduce(RawFileIO rfr) throws IOException, FileNotFoundException {
+	public void initMapReduce(int[] links) throws IOException, FileNotFoundException {
 
 		File outputj = new File(OUTPUTLINEJOB1);
 		if(outputj.exists())
@@ -52,7 +64,7 @@ public class MapReduceRanker implements IPageRanker {
 			throw new IOException();
 		}
 		PrintWriter writer = new PrintWriter(outputj);
-		int[] links = rfr.getLinks();
+		//int[] links = rfr.getLinks();
 		int i=0;
 		while(i<links.length ) {
 			i++;

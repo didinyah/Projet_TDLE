@@ -25,6 +25,11 @@ public class WikiMapReduceIterator
 	private int  iteration = 10;
 	private static double damping = 0.85;
 
+	/**
+	 * Classe utilisee pour le Mapper de texte il le prepare pour le {@link RankerReducer}
+	 * @author dinar
+	 *
+	 */
 	public static class RankerMapper 
 	extends Mapper<LongWritable, Text, Text, Text>{
 
@@ -41,7 +46,7 @@ public class WikiMapReduceIterator
 				String[] elems =  ligne.split("\t");
 				// Page_Or valeur liensExterne
 
-				if(elems.length >= 2)
+				if(elems.length == 2)
 				{
 					context.write(new Text(elems[0]), new Text("!"));
 				}
@@ -68,13 +73,18 @@ public class WikiMapReduceIterator
 		}
 	}
 
+	/**
+	 * Permet de reduire le mapiing du {@link RankerMapper} sous forme de 
+	 * @author dinar
+	 *
+	 */
 	public static class RankerReducer
 	extends Reducer<Text,Text,Text,Text>{
 		public void reduce(Text key, Iterable<Text> values, 
 				Context context
 				) throws IOException, InterruptedException {
 
-			boolean pageEstExistante = false;
+			//boolean pageEstExistante = false;
 			String link = "";
 
 			double sommePageAvecLien = 0;
@@ -83,11 +93,11 @@ public class WikiMapReduceIterator
 			{
 				String mot = val.toString();
 
-				if(mot.equals("!"))
+				/*if(mot.equals("!"))
 				{
 					pageEstExistante = true;
-				}
-				else if(mot.startsWith("|"))
+				}*/
+				if(mot.startsWith("|"))
 				{
 					link = "\t" +mot.substring(1);
 				}
@@ -106,26 +116,42 @@ public class WikiMapReduceIterator
 				}
 
 			}
-			if(pageEstExistante)
-			{
+			//if(pageEstExistante)
+			//{
 				double newRank =  (damping * sommePageAvecLien + (1-damping));
 				if(!link.isEmpty())
-					context.write(key,new Text( String.format(Locale.ENGLISH,"%.5f",newRank)+link ));
+					context.write(key,new Text( String.format(Locale.ENGLISH,"%.10f",newRank)+link ));
 				else
-					context.write(key,new Text( String.format(Locale.ENGLISH,"%.5f",newRank)));
+					context.write(key,new Text( String.format(Locale.ENGLISH,"%.10f",newRank)));
 
 			
-			}
+			//}
 
 		}
 	}
 
+	/**
+	 * Constructeur de base 
+	 * permet de definir la valeur de base de damping et le nomre d'iteration a faire
+	 * @param damping la valeur constante utilise a chaque iteration du MapReducer
+	 * @param iteration le nombre de mapreduce a effectue 
+	 */
 	public WikiMapReduceIterator(double damping,int iteration)
 	{
 		this.iteration = iteration;
-		this.damping = damping;
+		//this.iteration =1; 
+		WikiMapReduceIterator.damping = damping;
 	}
 
+	/**
+	 * permet de llancer loperation de Map Reduce
+	 * @param input
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 * @throws InterruptedException
+	 */
 	public String launch(String input) throws IllegalArgumentException, IOException, ClassNotFoundException, InterruptedException
 	{
 		File inputFile = new File(input); 
@@ -148,14 +174,9 @@ public class WikiMapReduceIterator
 			
 			String newPath = OUTPUTFOLDER + "/" + OUTPUTFILENAME + i;
 			File outputfile = new File(newPath);
-			if(outputfile.isDirectory())
-			{
-				for (File file : outputfile.listFiles())
-				{
-					file.delete();
-				}
-				outputfile.delete();
-			}
+			suppressionRecursive(outputfile);
+			
+			
 			Configuration conf = new Configuration();
 			Job job = new Job(conf,"iterationPageRank");
 			job.setJarByClass(WikiMapReduceIterator.class);
@@ -184,6 +205,20 @@ public class WikiMapReduceIterator
 		return oldPath;
 
 	}
+
+	public void suppressionRecursive(File outputfile) {
+		if(outputfile.isDirectory())
+		{
+			for (File file : outputfile.listFiles())
+			{
+			
+				 suppressionRecursive(file);
+			}
+		}
+		outputfile.delete();
+	}
+	
+
 
 
 }
