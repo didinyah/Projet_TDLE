@@ -14,7 +14,7 @@ import java.util.Arrays;
 /** 
  * Calculates PageRank, by encapsulating a list of links and a list of current PageRank values.
  **/
-final class ArrayPageRank {
+public final class ArrayPageRank {
 	
 	/*---- Fields ----*/
 	
@@ -23,12 +23,15 @@ final class ArrayPageRank {
 	public double[] pageranks;
 	
 	
+	/**Array that displays the number of incoming links for each page. Length equals idLimit.**/
+	public int[] nbLinksPage;
+	
 	/** List of page-to-page links in a packed run-length format:
 	(target page ID, number of incoming links, source page IDs...), ... .**/
-	private int[] links;
+	public int[] links;
 	
 	/**Maximum page ID value plus 1. This sets the length of various arrays.**/
-	private int idLimit;
+	public int idLimit;
 	
 	/**Number of page IDs with incoming links or outgoing links (ignores disconnected nodes).**/
 	private int numActive;
@@ -67,16 +70,21 @@ final class ArrayPageRank {
 		
 		// Compute metadata fields
 		boolean[] hasIncomingLinks = new boolean[idLimit];
+		this.nbLinksPage = new int[idLimit];
+		int pageActu=0;
 		numOutgoingLinks = new int[idLimit];
 		for (int i = 0; i < links.length; ) {
 			int dest = links[i];
 			hasIncomingLinks[dest] = true;
 			int numIncoming = links[i + 1];
+			nbLinksPage[pageActu] = numIncoming;
 			for (int j = 0; j < numIncoming; j++) {
 				int src = links[i + 2 + j];
 				numOutgoingLinks[src]++;
 			}
+			
 			i += numIncoming + 2;
+			pageActu++;
 		}
 		isActive = new boolean[idLimit];
 		numActive = 0;

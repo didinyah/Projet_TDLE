@@ -5,72 +5,81 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import org.apache.http.HttpHost;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RestClient;
+
+import static org.elasticsearch.common.xcontent.XContentFactory.*;
+
 import wikipediapckg.WriterReader.RawFileIO;
-import wikipediapckg.pageRank.hadoop.job.WikiMapReduceIterator;
+import wikipediapckg.pageRank.IPageRanker;
+import wikipediapckg.pageRank.arraysRanker.ArrayPageRank;
+import wikipediapckg.pageRank.arraysRanker.ParseWiki;
 
 public class JsonWriter {
 	
-	public static String OUTPUTJSONFILE = "json/Job1OutPut.txt"; 
+	public static String OUTPUTJSONFILE = "json/data"; 
 	
-	public void createPageRank(int nbIterations, double damping)throws IOException {
-
-
-		RawFileIO rfr = new RawFileIO();
-
-		rfr.searchFile();
-		//JOB 1 ecriture dans le fichier
-		initMapReduce(rfr);
+	public static XContentBuilder createJson(ArrayPageRank apr) {
 		
-		//JOB 2 Interation
-		WikiMapReduceIterator process = new WikiMapReduceIterator(damping, nbIterations);
+		int idLimit = apr.idLimit;
+		int[] linksPage = apr.nbLinksPage;
+		double[] pageranks = apr.pageranks;
+		XContentBuilder builder = null;
+		String json = "";
+		
 		try {
-			process.launch(OUTPUTJSONFILE);
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		
-		
-	}
-	public void initMapReduce(RawFileIO rfr) throws IOException, FileNotFoundException {
-
-		File outputj = new File(OUTPUTJSONFILE);
-		if(outputj.exists())
-		{
-			outputj.delete();
-		}
-		if(!outputj.createNewFile())
-		{
-			throw new IOException();
-		}
-		PrintWriter writer = new PrintWriter(outputj);
-		int[] links = rfr.getLinks();
-		int i=0;
-		while(i<links.length ) {
-			i++;
-			int nbLiensPageActu = links[i];
-			//writer.print(titrePage);
-			writer.print(links[i]);
-			writer.print("\t");
-			writer.print(1.0);
-			writer.print("\t");
-			// si la page a des liens, on les ajoute tous ï¿½ l'entier
-			if(nbLiensPageActu>0) {
-				i++;					
-				writer.print(links[i]);
-				i++;
-				for(int j=1; j<nbLiensPageActu; j++) {
-                    writer.print(",");
-					writer.print(links[i]);
-					i++;
-
-				}
+			builder = jsonBuilder();
+			for(int i=0; i<1000; i++) {
+				String pageRankPage = String.valueOf(pageranks[i]);
+				/*builder = builder.startObject()
+				        .field("index").startObject()
+					        .field("_index", "wikipedia")
+					        .field("_type", "page")
+					        .field("_id", i+1)
+					    .endObject()
+				    .endObject().startObject()
+				        .field("id", i+1)
+				        .field("nbL", linksPage[i])
+				        .field("pr", pageRankPage)
+				    .endObject();*/
+				json += "{\"index\":{\"_index\":\"wikipedia\",\"_type\":\"page\",\"_id\":\"" + String.valueOf(i+1) + "\"}}\n{\"id\":\"" + String.valueOf(i+1) + "\",\"nbL\":\"" + String.valueOf(linksPage[i]) + "\",\"pr\":\"" + String.valueOf(pageranks[i]) + "\"}\n"; 
+				System.out.println("Writing to json file : " + i);
 			}
+			// écriture dans le fichier json
+			File outputj = new File(OUTPUTJSONFILE);
+			if(outputj.exists())
+			{
+				outputj.delete();
+			}
+			if(!outputj.createNewFile())
+			{
+				throw new IOException();
+			}
+			PrintWriter writer = new PrintWriter(outputj);
+			writer.print(json);
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
 		}
-		writer.close();
+		return builder;
+	}
+	
+	public static void indexerJson(XContentBuilder builder) {
+		RestClient restClient = RestClient.builder(
+		        new HttpHost("localhost", 9200, "http"),
+		        new HttpHost("localhost", 9201, "http")).build();
+		Client client = (Client)restClient;
+		
+		IndexResponse response = client.prepareIndex("twitter", "tweet", "1")
+		        .setSource(builder)
+		        .get();
+	}
+	
+	public static void main(String[] args) {
+		//createJson();
+		
 	}
 }

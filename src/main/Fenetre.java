@@ -24,6 +24,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.DefaultCaret;
 
+import wikipediapckg.pageRank.arraysRanker.ArrayPageRank;
+
 import java.util.Collections;
 import java.util.ListIterator;
 import java.util.Map;
@@ -35,8 +37,7 @@ public class Fenetre extends JFrame {
 	public JTextField jtf = new JTextField("");
 	public JLabel label = new JLabel("");
 	public JPanel bottom = new JPanel( new GridLayout(0,1,0,10) );
-	private int[][] allLinksSplitted;
-	private double[] pageRanks;
+	private ArrayPageRank apr;
 	private Map<Integer,String> titleById;
 
 	//la fonction à activer qunad on click sur bouton
@@ -111,12 +112,11 @@ public class Fenetre extends JFrame {
 		this.creerres();
 	}
 	
-	public Fenetre(int[][] allLinksSplitted, double[] pageranks, Map<Integer,String> titleById){
+	public Fenetre(ArrayPageRank apr, Map<Integer,String> titleById){
 		//création du panneau des options
 		this.creerPanneau();
 		this.creerres();
-		this.allLinksSplitted = allLinksSplitted;
-		this.pageRanks = pageranks;
+		this.apr = apr;
 		this.titleById = titleById;
 	}
 

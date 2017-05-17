@@ -8,7 +8,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.elasticsearch.action.get.GetResponse;
+
 import main.Fenetre;
+import wikipediapckg.ElasticSearch.ElasticSearchImplementation;
+import wikipediapckg.ElasticSearch.JsonWriter;
 import wikipediapckg.WriterReader.RawFileIO;
 import wikipediapckg.pageRank.IPageRanker;
 
@@ -68,10 +72,16 @@ public final class ParseWiki implements IPageRanker{
 		// On ouvre la fenêtre pour consulter les résultats
 		//HashMap<Integer, Integer> nbLinksPages = evaluateNbLinks(links);
 		
-		int[][] allLinksSplitted = splitAllLinks(rfr.getLinks(), rfr.getTitleToId().size());
+		//int[][] allLinksSplitted = splitAllLinks(rfr.getLinks(), rfr.getTitleToId().size());
 		//printSomePagesLinksSplitted(allLinksSplitted, rfr.getIdToTitle());
 				
-		//Fenetre fenetre = new Fenetre(allLinksSplitted, pageranks, rfr.getIdToTitle());
+		//Fenetre fenetre = new Fenetre(pr, rfr.getIdToTitle());
+		
+		//JsonWriter.createJson(pr);
+		
+		ElasticSearchImplementation esi = new ElasticSearchImplementation();
+		GetResponse resp = esi.getResponseRequest(1);
+		System.out.println(resp.toString());
 	}
 
 

@@ -7,6 +7,7 @@ import java.util.concurrent.CountDownLatch;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseListener;
@@ -26,8 +27,7 @@ public class ElasticSearchImplementation {
 		if(restClient == null)
 		{
 			 restClient = RestClient.builder(
-				        new HttpHost("localhost", 9200, "http"),
-				        new HttpHost("localhost", 9201, "http")).build();
+				        new HttpHost("localhost", 9200, "http")).build();
 		}
 		return restClient;
 	}
@@ -42,6 +42,7 @@ public class ElasticSearchImplementation {
 		{
 			e.printStackTrace();
 		}
+		
 	}
 	
 	public void AddJsonToElasticSearch(String json, String requete, String url)
@@ -103,5 +104,14 @@ public class ElasticSearchImplementation {
 		        .setSource(json[i])
 		        );
 		}
+	}
+	
+	public GetResponse getResponseRequest(int nb) {
+		Client client = (Client)restClient;
+		System.out.println(client.toString());
+		GetResponse response = client.prepareGet("wikipedia", "page", String.valueOf(nb))
+		        .setOperationThreaded(false)
+		        .get();
+		return response;
 	}
 }
