@@ -11,42 +11,43 @@ package wikipediapckg.pageRank.arraysRanker;
 import java.util.Arrays;
 
 
-/* 
+/** 
  * Calculates PageRank, by encapsulating a list of links and a list of current PageRank values.
- */
+ **/
 final class ArrayPageRank {
 	
 	/*---- Fields ----*/
 	
-	// The vector of current PageRank values, changing after each iteration. Length equals idLimit.
-	// Other classes can read this data, but should not modify it.
+	/** The vector of current PageRank values, changing after each iteration. Length equals idLimit.
+	Other classes can read this data, but should not modify it.**/
 	public double[] pageranks;
 	
 	
-	// List of page-to-page links in a packed run-length format:
-	// (target page ID, number of incoming links, source page IDs...), ... .
+	/** List of page-to-page links in a packed run-length format:
+	(target page ID, number of incoming links, source page IDs...), ... .**/
 	private int[] links;
 	
-	// Maximum page ID value plus 1. This sets the length of various arrays.
+	/**Maximum page ID value plus 1. This sets the length of various arrays.**/
 	private int idLimit;
 	
-	// Number of page IDs with incoming links or outgoing links (ignores disconnected nodes).
+	/**Number of page IDs with incoming links or outgoing links (ignores disconnected nodes).**/
 	private int numActive;
 	
-	// Indicates whether each page ID is active or not. Length equals idLimit.
+	/**Indicates whether each page ID is active or not. Length equals idLimit.**/
 	private boolean[] isActive;
 	
-	// The number of outgoing links each page ID has. Length equals idLimit.
+	/**The number of outgoing links each page ID has. Length equals idLimit.**/
 	private int[] numOutgoingLinks;
 	
-	// Temporary array, which is filled and discarded per iteration. Length equals idLimit.
+	/**Temporary array, which is filled and discarded per iteration. Length equals idLimit.**/
 	private double[] newPageranks;
 	
 	
 	/*---- Constructor ----*/
 	
-	// Constructs a PageRank calculator based on the given array of links
-	// in the compressed format returned by class PageLinksList.
+	/** Constructs a PageRank calculator based on the given array of links
+	* in the compressed format returned by class PageLinksList.
+	**/
 	public ArrayPageRank(int[] links) {
 		this.links = links;
 		
@@ -99,7 +100,7 @@ final class ArrayPageRank {
 	
 	/*---- Methods ----*/
 	
-	// Performs one iteration of the PageRank algorithm and updates the values in the array 'pageranks'.
+	/**Performs one iteration of the PageRank algorithm and updates the values in the array 'pageranks'.**/
 	public void iterateOnce(double damping) {
 		// Pre-divide by number of outgoing links
 		for (int i = 0; i < idLimit; i++) {
