@@ -86,6 +86,23 @@ public class Fenetre extends JFrame {
 					}
 				}
 			}
+			/*double[] sorted = rdto.getPageranks().clone();
+			Arrays.sort(sorted);
+			int foundResults = 0;
+			for (int i = 0; i < sorted.length+1; i++) {
+				for (int j = 0; j < sorted.length; j++) {
+					String elem = rdto.getIdToTitle().get(j);
+					if (rdto.getPageranks()[j] == sorted[sorted.length - 1 - i] && elem.toLowerCase().contains(query.toLowerCase())) {
+						add_panel(bottom, elem, rdto.getAllLinks().get(j), String.valueOf(rdto.getPageranks()[j]));
+						foundResults++;
+						break;
+					}
+				}
+				if(foundResults >= 3) {
+					break;
+				}
+				System.out.println("Résultats trouvés : " + foundResults );
+			}*/
 		}
 		
 		// on va rechercher les liens
