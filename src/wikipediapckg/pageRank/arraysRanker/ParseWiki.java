@@ -81,7 +81,9 @@ public final class ParseWiki implements IPageRanker{
 				
 		//Fenetre fenetre = new Fenetre(pr, rfr.getIdToTitle());
 		
-		ResultDTO rdto = new ResultDTO(pr.idLimit, pr.pageranks, pr.nbLinksPage, rfr.getIdToTitle());
+		Map<Integer, ArrayList<String>> allLinks = evaluateLinks(rfr.getLinks(),rfr.getIdToTitle());
+		
+		ResultDTO rdto = new ResultDTO(pr.idLimit, pr.pageranks, pr.nbLinksPage, rfr.getIdToTitle(), allLinks);
 		
 		//JsonWriter.createJson(pr);
 		
@@ -164,28 +166,26 @@ public final class ParseWiki implements IPageRanker{
 		
 	}
 	
-	private static HashMap<Integer, ArrayList<Integer>> evaluateLinks(int[] links) {
+	private static Map<Integer, ArrayList<String>> evaluateLinks(int[] links, Map<Integer, String> idToTitle) {
 		// links[0] = id de la page
 		// links[1] = nb de liens de la page d'id links[0]
 		// links[2..2+links[1]-1] = tous les ids des liens que r�f�rent la page d'id links[0]
-		HashMap<Integer, ArrayList<Integer>> res = new HashMap<Integer, ArrayList<Integer>>();
+		Map<Integer, ArrayList<String>> res = new HashMap<Integer, ArrayList<String>>();
 		int i = 0;
-		ArrayList<Integer> allLiensPageActu;
+		ArrayList<String> allLiensPageActu;
 		while(i<links.length) {
 			int idPageActu = links[i];
-			i++;
-			int nbLiensPageActu = links[i];
-			allLiensPageActu = new ArrayList<Integer>();
+			int nbLiensPageActu = links[i+1];
+			allLiensPageActu = new ArrayList<String>();
 			// si la page n'a pas de liens, on envoie une arraylist vide
-			if(nbLiensPageActu>0) {
-				i++;
-				for(int j=0; j<nbLiensPageActu; j++) {
-					allLiensPageActu.add(links[i]);
-					i++;
-				}
+			for(int j=0; j<nbLiensPageActu; j++) {
+				allLiensPageActu.add(idToTitle.get(links[i+2+j]));
 			}
 			res.put(idPageActu, allLiensPageActu);
-			System.out.println(i);
+			
+			System.out.println("mise des liens dans le hashmap : " +i);
+			
+			i+= nbLiensPageActu+2;
 		}
 		
 		return res;

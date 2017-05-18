@@ -9,7 +9,7 @@ import wikipediapckg.pageRank.hadoop.MapReduceRanker;
 public class Main {
 	public static void main(String[] args) {
 		// On indique le nombre d'it�rations � faire pour le pagerank
-		int nbIterations = 10;
+		int nbIterations = 5;
 		// choix de la strat�gie (avec ou sans mapreduce)
 		
 		// Strat�gie simple : pas de map reduce
@@ -19,7 +19,7 @@ public class Main {
 		IPageRanker ranker = new ParseWiki();
 		try {
 			ResultDTO rdto = ranker.createPageRank(nbIterations,damping);
-			Fenetre fen = new Fenetre(rdto);
+			Fenetre fen = new Fenetre(rdto, 40);
 		} 
 		catch (IOException e) {
 			e.printStackTrace();

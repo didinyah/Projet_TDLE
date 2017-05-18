@@ -39,6 +39,7 @@ public class Fenetre extends JFrame {
 	public JLabel label = new JLabel("");
 	public JPanel bottom = new JPanel( new GridLayout(0,1,0,10) );
 	private ResultDTO rdto;
+	public int maxResults = 40;
 
 	//la fonction à activer qunad on click sur bouton
 	public void result(JPanel bottom,String query){
@@ -48,14 +49,13 @@ public class Fenetre extends JFrame {
 		
 		// si pas de recherche, on affiche les 30 premiers r�sultats
 		if(query.isEmpty()) {
-			final int NUM_PAGES = 20;
+			//final int NUM_PAGES = 20;
 			double[] sorted = rdto.getPageranks().clone();
 			Arrays.sort(sorted);
-			for (int i = 0; i < NUM_PAGES; i++) {
+			for (int i = 0; i < maxResults; i++) {
 				for (int j = 0; j < sorted.length; j++) {
 					if (rdto.getPageranks()[j] == sorted[sorted.length - 1 - i]) {
-						System.out.printf("  %.3f  %s%n", Math.log10(rdto.getPageranks()[j]), rdto.getIdToTitle().get(j));
-						add_panel(bottom, rdto.getIdToTitle().get(j), new ArrayList<String>(), String.valueOf(rdto.getPageranks()[j]));
+						add_panel(bottom, rdto.getIdToTitle().get(j), rdto.getAllLinks().get(j), String.valueOf(rdto.getPageranks()[j]));
 						break;
 					}
 				}
@@ -84,6 +84,10 @@ public class Fenetre extends JFrame {
 			add_panel(bottom,"France",list.subList(2, 5),"8");
 			add_panel(bottom,"Etats-Unis",list.subList(1, 5),"7");
 			add_panel(bottom,"D-Day",list,"5");
+			add_panel(bottom,"E-Day",list,"5");
+			add_panel(bottom,"F-Day",list,"5");
+			add_panel(bottom,"G-Day",list,"5");
+			add_panel(bottom,"H-Day",list,"5");
 		}		
 		else{}*/
 	}
@@ -117,22 +121,24 @@ public class Fenetre extends JFrame {
 			        jf.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			    }  
 			});
-			bottom.add(labelsource,0);
+			bottom.add(labelsource,BorderLayout.SOUTH);
 		}
 	}
 	
 	//la classe fenetre
-	public Fenetre(){
+	public Fenetre(int maxResults){
 		//création du panneau des options
 		this.creerPanneau();
 		this.creerres();
+		this.maxResults = maxResults;
 	}
 	
-	public Fenetre(ResultDTO rdto){
+	public Fenetre(ResultDTO rdto, int maxResults){
 		//création du panneau des options
 		this.creerPanneau();
 		this.creerres();
 		this.rdto = rdto;
+		this.maxResults = maxResults;
 	}
 
 	//le panneau du haut avec la barre de recherche et le bouton	
@@ -197,6 +203,6 @@ public class Fenetre extends JFrame {
 	
 	//la fonction main
 	public static void main(String[] args){
-		Fenetre fen = new Fenetre();
+		Fenetre fen = new Fenetre(20);
 	}
 }

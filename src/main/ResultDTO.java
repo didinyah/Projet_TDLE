@@ -1,5 +1,7 @@
 package main;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ResultDTO {
@@ -16,11 +18,14 @@ public class ResultDTO {
 	
 	private Map<Integer, String> idToTitle;
 	
-	public ResultDTO(int idLimit, double[] pageranks, int[] nbLinksPage, Map<Integer, String> idToTitle) {
+	private Map<Integer, ArrayList<String>> allLinks;
+	
+	public ResultDTO(int idLimit, double[] pageranks, int[] nbLinksPage, Map<Integer, String> idToTitle, Map<Integer, ArrayList<String>> allLinks) {
 		this.setIdLimit(idLimit);
 		this.setPageranks(pageranks);
 		this.setNbLinksPage(nbLinksPage);
 		this.setIdToTitle(idToTitle);
+		this.setAllLinks(allLinks);
 	}
 
 	public double[] getPageranks() {
@@ -53,5 +58,13 @@ public class ResultDTO {
 
 	public void setIdToTitle(Map<Integer, String> idToTitle) {
 		this.idToTitle = idToTitle;
+	}
+
+	public Map<Integer, ArrayList<String>> getAllLinks() {
+		return allLinks;
+	}
+
+	public void setAllLinks(Map<Integer, ArrayList<String>> allLinks) {
+		this.allLinks = allLinks;
 	}
 }
