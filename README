@@ -1,0 +1,40 @@
+#Projet_TDLE
+
+Lancement du projet dans /src/main/Main.java (ne pas oublier le paramètre -mx8G si vous avez une bonne mémoire vive)
+
+##Paramètres configurables dans le fichier :
+
+ligne 12 : le nombre d'itérations à faire pour l'algorithme du pageRank
+ligne 13 : le facteur damping
+ligne 14 : le nombre maximum de résultats qui seront affichés lors des recherches sur l'interface
+
+Choix de la méthode pour le pagerank : 
+
+ligne 19 : commenter/décommenter la ligne si on veut la méthode ArrayPageRank (itératif, simple pagerank)
+ligne 22 : commenter/décommenter la ligne si on veut la méthode MapReduceRanker (utilisation du map/reduce)
+
+Pour la méthode ArrayPageRank, il faut avoir les fichiers /wikifolder/frwiki-latest-page.sql et /wikifolder/frwiki-latest-pagelinks.sql
+Note : Les fichiers /wikifolder/wikipedia-page-id-title.raw et /wikifolder/wikipedia-page-links.raw sont utilisés s'ils existent (afin de faire le pagerank plus rapidement), ils sont générés à partir des .sql sinon
+
+Pour la méthode MapReduceRanker, le test se fait sur le fichier TestMapReduce.txt situé dans /hadoop/TestMapReduce.txt
+
+##Description de certains fichiers
+
+/wikifolder/top50.txt : Contient le top 50 des pageRank : 1ère colonne : PR réel, 2ème colonne : Math.log10(PR), 3ème colonne : Titre_page 
+
+/src/main/ResultDTO.java : Data Transfer Object contenant les données à afficher dans la fenête
+/src/main/Fenetre.java : Classe contenant la fenêtre et la recherche effectuée par l'utilisateur
+/src/main/PageRankOld.java : Fichier test permettant un test simple de l'algorithme du pagerank avec une matrice 5*5 (entrée à la main)
+
+/src/wikipediapckg/ElasticSearch/JsonWriter.java : Fichier permettant la création du JSON à insérer dans elasticsearch (créé dans /json/data), pour le créer, décommenter la ligne 88 dans /src/wikipediapckg/pageRank/arraysRanker/ParseWiki.java
+/src/wikipediapckg/ElasticSearch/ : Toutes les autres classes sont l'implémentation de elasticsearch dans le projet (non fonctionnel)
+
+/src/wikipediapckg/pageRank/IPageRanker.java : Interface qui permet de changer d'une méthode à l'autre facilement
+
+/src/wikipediapckg/pageRank/arraysRanker/ArrayPageRank.java : implémentation du pagerank dans le projet
+/src/wikipediapckg/pageRank/arraysRanker/ParseWiki.java : Méthode 1, lit les données wikipedia, applique le pagerank et renvoie un resultDTO
+
+/src/wikipediapckg/pageRank/arraysRanker/hadoop/MapReduceRanker.java : Méthode 1, lit les données wikipu fichier test, applique le pagerank et renvoie un resultDTO
+/src/wikipediapckg/pageRank/arraysRanker/hadoop/job/WikiMapReduceIterator.java : Contient les méthodes du Mapper et du Reducer. La classe s'occupe de faire les iterations du Map/Reducer en creant les jobs appropries. Il cree les calculs des Map/Reducer dans le fichier Hadoop
+
+/src/wikipediapckg/WriterReader/ : Classes contenant les IO et helpers pour lire les fichiers SQL et les mettre dans des tableaux/maps

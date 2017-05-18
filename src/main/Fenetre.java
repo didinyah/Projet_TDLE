@@ -76,10 +76,19 @@ public class Fenetre extends JFrame {
 			for (int i = 0; i < maxResults; i++) {
 				for (int j = foundResults-1; j >= 0; j--) {
 					String elem = rdto.getIdToTitle().get(j);
+					String[] allQueries = query.split(" ");
+					
 					if(elem != null) {
-						if (elem.toLowerCase().contains(query.toLowerCase())) {
-							System.out.println(rdto.getIdToTitle().get(j));
+						boolean sortir = true;
+						for(int k = 0; k<allQueries.length && sortir; k++) {
+							if (!elem.toLowerCase().contains(allQueries[k].toLowerCase())) {
+								sortir = false;
+							}
+						}
+						if(sortir) {
 							add_panel(bottom, rdto.getIdToTitle().get(j), rdto.getAllLinks().get(j), String.valueOf(rdto.getPageranks()[j]));
+							System.out.println(rdto.getIdToTitle().get(j));
+							
 							foundResults=j;
 							break;
 						}
@@ -160,7 +169,7 @@ public class Fenetre extends JFrame {
 			        final JScrollPane scrollPane = new JScrollPane(txtArea);
 				    txtArea.setBackground(Color.LIGHT_GRAY);
 			        jf.add(scrollPane);
-                    txtArea.setText( "Link present in the page "+nom+":\n" );
+                    txtArea.setText( "Links that refers the page "+nom+":\n" );
 	                for(int i=0;i<list.size();i++)
 	                {
 	                    txtArea.setText( txtArea.getText()+" \n "+list.get(i) );

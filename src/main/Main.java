@@ -8,24 +8,28 @@ import wikipediapckg.pageRank.hadoop.MapReduceRanker;
 
 public class Main {
 	public static void main(String[] args) {
-		// On indique le nombre d'itï¿½rations ï¿½ faire pour le pagerank
-		int nbIterations = 5;
-		// choix de la stratï¿½gie (avec ou sans mapreduce)
-		
-		// Stratï¿½gie simple : pas de map reduce
+		// On indique le nombre d'iterations a faire pour le pagerank, le damping et le nbmax de résultats affiches
+		int nbIterations = 20;
 		double damping = 0.85;
+		int nbMaxResultsAffiches = 40;
+		
+		// Choix de la stratï¿½gie (avec ou sans mapreduce)
+		
+		// Strategie simple : pas de map reduce
+		IPageRanker ranker = new ParseWiki();
+		
+		// Strategie map reduce
 		//IPageRanker ranker = new MapReduceRanker();
 		
-		IPageRanker ranker = new ParseWiki();
 		try {
 			ResultDTO rdto = ranker.createPageRank(nbIterations,damping);
-			Fenetre fen = new Fenetre(rdto, 40);
+			Fenetre fen = new Fenetre(rdto, nbMaxResultsAffiches);
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		// Stratï¿½gie map reduce
+		
 		
 	}
 }
