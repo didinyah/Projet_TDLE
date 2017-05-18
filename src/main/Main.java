@@ -18,7 +18,8 @@ public class Main {
 		
 		IPageRanker ranker = new ParseWiki();
 		try {
-			ranker.createPageRank(nbIterations,damping);
+			ResultDTO rdto = ranker.createPageRank(nbIterations,damping);
+			Fenetre fen = new Fenetre(rdto);
 		} 
 		catch (IOException e) {
 			e.printStackTrace();

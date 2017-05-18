@@ -38,8 +38,7 @@ public class Fenetre extends JFrame {
 	public JTextField jtf = new JTextField("");
 	public JLabel label = new JLabel("");
 	public JPanel bottom = new JPanel( new GridLayout(0,1,0,10) );
-	private ArrayPageRank apr;
-	private Map<Integer,String> titleById;
+	private ResultDTO rdto;
 
 	//la fonction à activer qunad on click sur bouton
 	public void result(JPanel bottom,String query){
@@ -48,23 +47,23 @@ public class Fenetre extends JFrame {
 		bottom.repaint();
 		
 		// si pas de recherche, on affiche les 30 premiers r�sultats
-		/*if(query.isEmpty()) {
+		if(query.isEmpty()) {
 			final int NUM_PAGES = 20;
-			double[] sorted = apr.pageranks.clone();
+			double[] sorted = rdto.getPageranks().clone();
 			Arrays.sort(sorted);
 			for (int i = 0; i < NUM_PAGES; i++) {
 				for (int j = 0; j < sorted.length; j++) {
-					if (apr.pageranks[j] == sorted[sorted.length - 1 - i]) {
-						System.out.printf("  %.3f  %s%n", Math.log10(apr.pageranks[j]), titleById.get(j));
-						add_panel(bottom, titleById.get(j), new ArrayList<String>(), String.valueOf(apr.pageranks[j]));
+					if (rdto.getPageranks()[j] == sorted[sorted.length - 1 - i]) {
+						System.out.printf("  %.3f  %s%n", Math.log10(rdto.getPageranks()[j]), rdto.getIdToTitle().get(j));
+						add_panel(bottom, rdto.getIdToTitle().get(j), new ArrayList<String>(), String.valueOf(rdto.getPageranks()[j]));
 						break;
 					}
 				}
 			}
-		}*/
+		}
 		
 		// on va rechercher les liens
-		ArrayList<String> list = new ArrayList<String>();
+		/*ArrayList<String> list = new ArrayList<String>();
 		list.add("a");
 		list.add("b");
 		list.add("c");
@@ -86,7 +85,7 @@ public class Fenetre extends JFrame {
 			add_panel(bottom,"Etats-Unis",list.subList(1, 5),"7");
 			add_panel(bottom,"D-Day",list,"5");
 		}		
-		else{}
+		else{}*/
 	}
 	
 	//la fonction ajouter paneau à bottom, ie , au panneau du dessous
@@ -129,12 +128,11 @@ public class Fenetre extends JFrame {
 		this.creerres();
 	}
 	
-	public Fenetre(ArrayPageRank apr, Map<Integer,String> titleById){
+	public Fenetre(ResultDTO rdto){
 		//création du panneau des options
 		this.creerPanneau();
 		this.creerres();
-		this.apr = apr;
-		this.titleById = titleById;
+		this.rdto = rdto;
 	}
 
 	//le panneau du haut avec la barre de recherche et le bouton	

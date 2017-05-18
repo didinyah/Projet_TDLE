@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import org.elasticsearch.action.get.GetResponse;
 
 import main.Fenetre;
+import main.ResultDTO;
 import wikipediapckg.ElasticSearch.ElasticSearchImplementation;
 import wikipediapckg.ElasticSearch.JsonWriter;
 import wikipediapckg.WriterReader.RawFileIO;
@@ -34,7 +35,7 @@ public final class ParseWiki implements IPageRanker{
 
 	/*---- Main program ----*/
 	
-	public void createPageRank(final int nbIterations,final double damping) throws IOException {
+	public ResultDTO createPageRank(final int nbIterations,final double damping) throws IOException {
 		
 		RawFileIO rfr = new RawFileIO();
 		
@@ -78,13 +79,17 @@ public final class ParseWiki implements IPageRanker{
 		//int[][] allLinksSplitted = splitAllLinks(rfr.getLinks(), rfr.getTitleToId().size());
 		//printSomePagesLinksSplitted(allLinksSplitted, rfr.getIdToTitle());
 				
-		Fenetre fenetre = new Fenetre(pr, rfr.getIdToTitle());
+		//Fenetre fenetre = new Fenetre(pr, rfr.getIdToTitle());
+		
+		ResultDTO rdto = new ResultDTO(pr.idLimit, pr.pageranks, pr.nbLinksPage, rfr.getIdToTitle());
 		
 		//JsonWriter.createJson(pr);
 		
 		//ElasticSearchImplementation esi = new ElasticSearchImplementation();
 		//GetResponse resp = esi.getResponseRequest(1);
 		//System.out.println(resp.toString());
+		
+		return rdto;
 	}
 
 
