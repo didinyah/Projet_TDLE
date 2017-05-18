@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Scanner;
@@ -46,6 +47,11 @@ public  class  MapReduceRanker implements IPageRanker {
 		double[] resPagerank;
 		HashMap<Integer,Integer>  nbLinksPage = new HashMap<Integer,Integer>() ;
 		HashMap<Integer,String>  idtotitleErzatz = new HashMap<Integer,String>() ;
+		HashMap<String,Integer>  titletoidErzatz = new HashMap<String,Integer>() ;
+		
+		HashMap<Integer,String[]> listdetablien = new HashMap<Integer,String[]>();
+		HashMap<Integer,ArrayList<String>> listedeliens = new HashMap<Integer,ArrayList<String>>();
+
 
 		int[] resLinksPage;
 
@@ -70,6 +76,7 @@ public  class  MapReduceRanker implements IPageRanker {
 				
 				pagerank.put(id, pagerankValue);
 				nbLinksPage.put(id, linksNumber);
+				listdetablien.put(id,  split[2].split(","));
 				
 				if(nbMax < id)
 				{
@@ -90,11 +97,22 @@ public  class  MapReduceRanker implements IPageRanker {
 				resLinksPage[k.getKey()-1] = k.getValue();
 				
 				idtotitleErzatz.put(k.getKey(), "Test"+k.getKey() );
+				titletoidErzatz.put("Test"+k.getKey(), k.getKey());
+			}
+			
+			for( Entry<Integer,String[]> k :  listdetablien.entrySet())
+			{
+				ArrayList<String> values = new ArrayList<String>();
+				for( String q : k.getValue())
+				{
+					values.add(idtotitleErzatz.get(Integer.valueOf(q)));
+				}
+				listedeliens.put(k.getKey(), values);
 			}
 
 		
 			//res = new ResultDTO(nbMax, resPagerank, resLinksPage, rfr.getIdToTitle());
-			res = new ResultDTO(nbMax, resPagerank, resLinksPage, idtotitleErzatz);
+			res = new ResultDTO(nbMax, resPagerank, resLinksPage, idtotitleErzatz,listedeliens);
 			
 			
 		} catch (IllegalArgumentException e) {
