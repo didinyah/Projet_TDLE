@@ -2,10 +2,14 @@ package wikipediapckg.pageRank.hadoop;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Scanner;
 
-import wikipediapckg.WriterReader.RawFileIO;
+import main.ResultDTO;
 import wikipediapckg.pageRank.IPageRanker;
 import wikipediapckg.pageRank.hadoop.job.WikiMapReduceIterator;
 
@@ -23,7 +27,7 @@ public  class  MapReduceRanker implements IPageRanker {
 	//public static String OUTPUTLINEJOB1 = "hadoop/Job1OutPut.txt"; 
 
 	@Override
-	public void createPageRank(int nbIterations, double damping) 
+	public ResultDTO createPageRank(int nbIterations, double damping) 
 			throws IOException {
 
 
@@ -37,11 +41,62 @@ public  class  MapReduceRanker implements IPageRanker {
 //		}
 //		System.gc();
 		
-		//JOB 2 Interation
+		//JOB 2 Iteration et lecture
+		HashMap<Integer,Double> pagerank = new HashMap<Integer,Double>();
+		double[] resPagerank;
+		HashMap<Integer,Integer>  nbLinksPage = new HashMap<Integer,Integer>() ;
+		HashMap<Integer,String>  idtotitleErzatz = new HashMap<Integer,String>() ;
+
+		int[] resLinksPage;
+
+		ResultDTO res = null;
+
+		int nbMax = 0;
+		
 		WikiMapReduceIterator process = new WikiMapReduceIterator(damping, nbIterations);
 		try {
-			process.launch(OUTPUTLINEJOB1,35);
+			Scanner result = new Scanner(new FileReader(process.launch(OUTPUTLINEJOB1,35)));
 			//process.launch(OUTPUTLINEJOB1,rfr.getIdToTitle().size() );
+			
+			while(result.hasNext())
+			{
+				String ligne = result.nextLine();
+				String[] split = ligne.split("\t");
+				
+				int id = Integer.valueOf(split[0]);
+				double pagerankValue = Double.valueOf(split[1]);
+				
+				int linksNumber = split[2].split(",").length;
+				
+				pagerank.put(id, pagerankValue);
+				nbLinksPage.put(id, linksNumber);
+				
+				if(nbMax < id)
+				{
+					nbMax = id;
+				}
+				
+			}
+			
+			resPagerank = new double[pagerank.size()];
+			resLinksPage = new int[nbLinksPage.size()];
+			
+			for( Entry<Integer,Double> k : pagerank.entrySet())
+			{
+				resPagerank[k.getKey()-1] = k.getValue();
+			}
+			for( Entry<Integer,Integer> k : nbLinksPage.entrySet())
+			{
+				resLinksPage[k.getKey()-1] = k.getValue();
+				
+				idtotitleErzatz.put(k.getKey(), "Test"+k.getKey() );
+			}
+
+		
+			//res = new ResultDTO(nbMax, resPagerank, resLinksPage, rfr.getIdToTitle());
+			res = new ResultDTO(nbMax, resPagerank, resLinksPage, idtotitleErzatz);
+			
+			
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -50,6 +105,7 @@ public  class  MapReduceRanker implements IPageRanker {
 			e.printStackTrace();
 		}
 		
+		return res;
 		
 		
 	}
