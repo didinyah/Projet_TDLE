@@ -24,6 +24,9 @@ public  class  MapReduceRanker implements IPageRanker {
 
 
 
+	/**
+	 * fichier utilise pour le test du Map Reduce
+	 */
 	public static String OUTPUTLINEJOB1 = "hadoop/TestMapReduce.txt"; 
 	//public static String OUTPUTLINEJOB1 = "hadoop/Job1OutPut.txt"; 
 
@@ -127,6 +130,12 @@ public  class  MapReduceRanker implements IPageRanker {
 		
 		
 	}
+	/**
+	 * Permet d initier le tableau dans un fichier afin de pouvoir l utiliser dans le Map/Reduce
+	 * @param links
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
 	public void initMapReduce(int[] links) throws IOException, FileNotFoundException {
 
 		File outputj = new File(OUTPUTLINEJOB1);
