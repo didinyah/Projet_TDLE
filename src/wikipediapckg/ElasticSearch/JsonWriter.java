@@ -28,26 +28,8 @@ public class JsonWriter {
 		int[] linksPage = apr.nbLinksPage;
 		double[] pageranks = apr.pageranks;
 		XContentBuilder builder = null;
-		String json = "";
 		
 		try {
-			builder = jsonBuilder();
-			for(int i=0; i<1000; i++) {
-				String pageRankPage = String.valueOf(pageranks[i]);
-				/*builder = builder.startObject()
-				        .field("index").startObject()
-					        .field("_index", "wikipedia")
-					        .field("_type", "page")
-					        .field("_id", i+1)
-					    .endObject()
-				    .endObject().startObject()
-				        .field("id", i+1)
-				        .field("nbL", linksPage[i])
-				        .field("pr", pageRankPage)
-				    .endObject();*/
-				json += "{\"index\":{\"_index\":\"wikipedia\",\"_type\":\"page\",\"_id\":\"" + String.valueOf(i+1) + "\"}}\n{\"id\":\"" + String.valueOf(i+1) + "\",\"nbL\":\"" + String.valueOf(linksPage[i]) + "\",\"pr\":\"" + String.valueOf(pageranks[i]) + "\"}\n"; 
-				System.out.println("Writing to json file : " + i);
-			}
 			// écriture dans le fichier json
 			File outputj = new File(OUTPUTJSONFILE);
 			if(outputj.exists())
@@ -59,7 +41,24 @@ public class JsonWriter {
 				throw new IOException();
 			}
 			PrintWriter writer = new PrintWriter(outputj);
-			writer.print(json);
+			
+			builder = jsonBuilder();
+			for(int i=0; i<idLimit; i++) {
+				/*builder = builder.startObject()
+				        .field("index").startObject()
+					        .field("_index", "wikipedia")
+					        .field("_type", "page")
+					        .field("_id", i+1)
+					    .endObject()
+				    .endObject().startObject()
+				        .field("id", i+1)
+				        .field("nbL", linksPage[i])
+				        .field("pr", pageRankPage)
+				    .endObject();*/
+				writer.print("{\"index\":{\"_index\":\"wikipedia\",\"_type\":\"page\",\"_id\":\"" + String.valueOf(i+1) + "\"}}\n{\"id\":\"" + String.valueOf(i+1) + "\",\"nbL\":\"" + String.valueOf(linksPage[i]) + "\",\"pr\":\"" + String.valueOf(pageranks[i]) + "\"}\n"); 
+				System.out.println("Writing to json file : " + i);
+			}
+			writer.close();
 		} 
 		catch (IOException e) {
 			e.printStackTrace();

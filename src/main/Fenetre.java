@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -46,8 +47,24 @@ public class Fenetre extends JFrame {
 		bottom.revalidate();
 		bottom.repaint();
 		
+		// si pas de recherche, on affiche les 30 premiers résultats
+		/*if(query.isEmpty()) {
+			final int NUM_PAGES = 20;
+			double[] sorted = apr.pageranks.clone();
+			Arrays.sort(sorted);
+			for (int i = 0; i < NUM_PAGES; i++) {
+				for (int j = 0; j < sorted.length; j++) {
+					if (apr.pageranks[j] == sorted[sorted.length - 1 - i]) {
+						System.out.printf("  %.3f  %s%n", Math.log10(apr.pageranks[j]), titleById.get(j));
+						add_panel(bottom, titleById.get(j), new ArrayList<String>(), String.valueOf(apr.pageranks[j]));
+						break;
+					}
+				}
+			}
+		}*/
+		
 		// on va rechercher les liens
-		/*ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<String>();
 		list.add("a");
 		list.add("b");
 		list.add("c");
@@ -69,7 +86,7 @@ public class Fenetre extends JFrame {
 			add_panel(bottom,"Etats-Unis",list.subList(1, 5),"7");
 			add_panel(bottom,"D-Day",list,"5");
 		}		
-		else{}*/
+		else{}
 	}
 	
 	//la fonction ajouter paneau Ã  bottom, ie , au panneau du dessous

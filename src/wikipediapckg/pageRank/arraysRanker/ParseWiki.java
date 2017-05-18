@@ -1,6 +1,9 @@
 package wikipediapckg.pageRank.arraysRanker;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -75,13 +78,13 @@ public final class ParseWiki implements IPageRanker{
 		//int[][] allLinksSplitted = splitAllLinks(rfr.getLinks(), rfr.getTitleToId().size());
 		//printSomePagesLinksSplitted(allLinksSplitted, rfr.getIdToTitle());
 				
-		//Fenetre fenetre = new Fenetre(pr, rfr.getIdToTitle());
+		Fenetre fenetre = new Fenetre(pr, rfr.getIdToTitle());
 		
 		//JsonWriter.createJson(pr);
 		
-		ElasticSearchImplementation esi = new ElasticSearchImplementation();
-		GetResponse resp = esi.getResponseRequest(1);
-		System.out.println(resp.toString());
+		//ElasticSearchImplementation esi = new ElasticSearchImplementation();
+		//GetResponse resp = esi.getResponseRequest(1);
+		//System.out.println(resp.toString());
 	}
 
 
@@ -115,6 +118,45 @@ public final class ParseWiki implements IPageRanker{
 				}
 			}
 		}
+	}
+	
+	private static void writeTopPages(double[] pageranks, Map<Integer,String> titleById) {
+		final int NUM_PAGES = 50;
+		double[] sorted = pageranks.clone();
+		Arrays.sort(sorted);
+		File output = new File("wikifolder/top50.txt");
+		if(output.exists())
+		{
+			output.delete();
+		}
+		try {
+			if(!output.createNewFile())
+			{
+				throw new IOException();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		PrintWriter writer;
+		try {
+			writer = new PrintWriter(output);
+			for (int i = 0; i < NUM_PAGES; i++) {
+				for (int j = 0; j < sorted.length; j++) {
+					if (pageranks[j] == sorted[sorted.length - 1 - i]) {
+						System.out.printf("  %.3f  %s%n", Math.log10(pageranks[j]), titleById.get(j));
+						writer.printf("  %f  %.3f  %s%n", pageranks[j], Math.log10(pageranks[j]), titleById.get(j));
+						break;
+					}
+				}
+			}
+			writer.close();
+		} 
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		//int[] links = rfr.getLinks();
+
+		
 	}
 	
 	private static HashMap<Integer, ArrayList<Integer>> evaluateLinks(int[] links) {
@@ -188,20 +230,19 @@ public final class ParseWiki implements IPageRanker{
 		System.out.println("Séparation des liens");
 		while(i<links.length) {
 			int idPageActu = links[i];
-			i++;
-			int nbLiensPageActu = links[i];
+			int nbLiensPageActu = links[i+1];
 			liensPageActu = new int[nbLiensPageActu+2];
 			liensPageActu[0] = idPageActu;
 			liensPageActu[1] = nbLiensPageActu;
 			// si la page a des liens, on les ajoute tous ï¿½ l'entier
 			if(nbLiensPageActu>0) {
-				i++;
 				for(int j=0; j<nbLiensPageActu; j++) {
-					liensPageActu[j+2] = links[i];
-					i++;
+					liensPageActu[j+2] = links[i+2+j];
 				}
 			}
 			res[pageActu] = liensPageActu;
+			
+			i += nbLiensPageActu + 2;
 			pageActu++;
 		}
 		System.out.println("Fin de séparation des liens");
