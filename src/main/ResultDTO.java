@@ -20,12 +20,20 @@ public class ResultDTO {
 	
 	private Map<Integer, ArrayList<String>> allLinks;
 	
+	private Map<Integer, Double> idToDouble;
+	
 	public ResultDTO(int idLimit, double[] pageranks, int[] nbLinksPage, Map<Integer, String> idToTitle, Map<Integer, ArrayList<String>> allLinks) {
 		this.setIdLimit(idLimit);
 		this.setPageranks(pageranks);
 		this.setNbLinksPage(nbLinksPage);
 		this.setIdToTitle(idToTitle);
 		this.setAllLinks(allLinks);
+		
+		/*Map<Integer, Double> idToDoublee = new HashMap<Integer, Double>();
+		for(int i=0; i<idLimit; i++) {
+			idToDoublee.put(i, pageranks[i]);
+		}
+		this.idToDouble = idToDoublee;*/
 	}
 
 	public double[] getPageranks() {
@@ -66,5 +74,13 @@ public class ResultDTO {
 
 	public void setAllLinks(Map<Integer, ArrayList<String>> allLinks) {
 		this.allLinks = allLinks;
+	}
+
+	public Map<Integer, Double> getIdToDouble() {
+		return idToDouble;
+	}
+
+	public void setIdToDouble(Map<Integer, Double> idToDouble) {
+		this.idToDouble = idToDouble;
 	}
 }

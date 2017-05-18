@@ -61,8 +61,35 @@ public class Fenetre extends JFrame {
 				}
 			}
 		}
+		else {
+			double[] sorted = rdto.getPageranks().clone();
+			Arrays.sort(sorted);
+			
+			ArrayIndexComparator comparator = new ArrayIndexComparator(rdto.getPageranks().clone());
+			Integer[] indexes = comparator.createIndexArray();
+			Arrays.sort(indexes, comparator);
+			
+			int foundResults = sorted.length;
+			Map<Integer, Double> idToDouble = rdto.getIdToDouble();
+			//System.out.println("1er elem du array trié : " + indexes[indexes.length-1] + " son titre : " + rdto.getIdToTitle().get(indexes.length-1) + " et son pr :" + idToDouble.get(indexes.length-1));
+			System.out.println("1er elem du array trié : " + rdto.getIdToTitle().get(sorted.length-1));
+			for (int i = 0; i < maxResults; i++) {
+				for (int j = foundResults-1; j >= 0; j--) {
+					String elem = rdto.getIdToTitle().get(j);
+					if(elem != null) {
+						if (elem.toLowerCase().contains(query.toLowerCase())) {
+							System.out.println(rdto.getIdToTitle().get(j));
+							add_panel(bottom, rdto.getIdToTitle().get(j), rdto.getAllLinks().get(j), String.valueOf(rdto.getPageranks()[j]));
+							foundResults=j;
+							break;
+						}
+					}
+				}
+			}
+		}
 		
 		// on va rechercher les liens
+		System.out.println("France".contains(query));
 		/*ArrayList<String> list = new ArrayList<String>();
 		list.add("a");
 		list.add("b");
@@ -95,8 +122,12 @@ public class Fenetre extends JFrame {
 	//la fonction ajouter paneau Ã  bottom, ie , au panneau du dessous
 	public void add_panel(JPanel bottom,final String nom,final java.util.List<String> list,String pagerank){
 		if( nom.length()>0 ){
-			int n = list.size() ;
-			JLabel labelsource = new JLabel("<html>Nom:"+nom+"<br>Nombre de liens:"+n+"<br>pagerank:"+pagerank+"</html>");
+			int listSize = 0;
+			if(list != null) {
+				listSize = list.size() ;
+			}
+			
+			JLabel labelsource = new JLabel("<html>Nom:"+nom+"<br>Nombre de liens:"+listSize+"<br>pagerank:"+pagerank+"</html>");
 			labelsource.setBorder(BorderFactory.createLineBorder(Color.black));
 			labelsource.setPreferredSize(new Dimension(600,70));
 			labelsource.setHorizontalAlignment(JLabel.LEFT);
