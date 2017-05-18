@@ -19,7 +19,7 @@ public  class  MapReduceRanker implements IPageRanker {
 
 
 
-	public static String OUTPUTLINEJOB1 = "hadoop/JobTest.txt"; 
+	public static String OUTPUTLINEJOB1 = "hadoop/TestMapReduce.txt"; 
 	//public static String OUTPUTLINEJOB1 = "hadoop/Job1OutPut.txt"; 
 
 	@Override
@@ -40,7 +40,8 @@ public  class  MapReduceRanker implements IPageRanker {
 		//JOB 2 Interation
 		WikiMapReduceIterator process = new WikiMapReduceIterator(damping, nbIterations);
 		try {
-			process.launch(OUTPUTLINEJOB1);
+			process.launch(OUTPUTLINEJOB1,35);
+			//process.launch(OUTPUTLINEJOB1,rfr.getIdToTitle().size() );
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -72,7 +73,7 @@ public  class  MapReduceRanker implements IPageRanker {
 			//writer.print(titrePage);
 			writer.print(links[i]);
 			writer.print("\t");
-			writer.print(1.0);
+			writer.print(0.0);
 			writer.print("\t");
 			// si la page a des liens, on les ajoute tous � l'entier
 			if(nbLiensPageActu>0) {

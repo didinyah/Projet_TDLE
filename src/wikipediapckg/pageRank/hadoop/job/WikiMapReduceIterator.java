@@ -25,6 +25,8 @@ public class WikiMapReduceIterator
 	private int  iteration = 10;
 	private static double damping = 0.85;
 
+	private static int nombresPages = 1;
+
 	/**
 	 * Classe utilisee pour le Mapper de texte il le prepare pour le {@link RankerReducer}
 	 * @author dinar
@@ -112,19 +114,19 @@ public class WikiMapReduceIterator
 
 					}
 
-					
+
 				}
 
 			}
 			//if(pageEstExistante)
 			//{
-				double newRank =  (damping * sommePageAvecLien + (1-damping));
-				if(!link.isEmpty())
-					context.write(key,new Text( String.format(Locale.ENGLISH,"%.10f",newRank)+link ));
-				else
-					context.write(key,new Text( String.format(Locale.ENGLISH,"%.10f",newRank)));
+			double newRank =  (damping * sommePageAvecLien + (1-damping)/nombresPages);
+			if(!link.isEmpty())
+				context.write(key,new Text( String.format(Locale.ENGLISH,"%.10f",newRank)+link ));
+			else
+				context.write(key,new Text( String.format(Locale.ENGLISH,"%.10f",newRank)));
 
-			
+
 			//}
 
 		}
@@ -144,7 +146,7 @@ public class WikiMapReduceIterator
 	}
 
 	/**
-	 * permet de llancer loperation de Map Reduce
+	 * permet de lancer loperation de Map Reduce
 	 * @param input
 	 * @return
 	 * @throws IllegalArgumentException
@@ -152,7 +154,7 @@ public class WikiMapReduceIterator
 	 * @throws ClassNotFoundException
 	 * @throws InterruptedException
 	 */
-	public String launch(String input) throws IllegalArgumentException, IOException, ClassNotFoundException, InterruptedException
+	public String launch(String input,int nombrePages) throws IllegalArgumentException, IOException, ClassNotFoundException, InterruptedException
 	{
 		File inputFile = new File(input); 
 
@@ -160,6 +162,7 @@ public class WikiMapReduceIterator
 		{
 			throw new FileNotFoundException("le fichier n'existe pas");
 		}
+		WikiMapReduceIterator.nombresPages = nombrePages;
 
 
 
@@ -171,12 +174,12 @@ public class WikiMapReduceIterator
 			{
 				oldPath = oldPath+"/part-r-00000";
 			}
-			
+
 			String newPath = OUTPUTFOLDER + "/" + OUTPUTFILENAME + i;
 			File outputfile = new File(newPath);
 			suppressionRecursive(outputfile);
-			
-			
+
+
 			Configuration conf = new Configuration();
 			Job job = new Job(conf,"iterationPageRank");
 			job.setJarByClass(WikiMapReduceIterator.class);
@@ -195,13 +198,13 @@ public class WikiMapReduceIterator
 			oldPath = newPath;
 
 		}
-		
+
 		if(iteration!= 0)
 		{
 			oldPath = oldPath+"/part-r-00000";
 		}
-		
-		
+
+
 		return oldPath;
 
 	}
@@ -211,13 +214,13 @@ public class WikiMapReduceIterator
 		{
 			for (File file : outputfile.listFiles())
 			{
-			
-				 suppressionRecursive(file);
+
+				suppressionRecursive(file);
 			}
 		}
 		outputfile.delete();
 	}
-	
+
 
 
 
